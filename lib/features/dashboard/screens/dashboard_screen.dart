@@ -20,7 +20,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DashboardProvider>(context, listen: false).loadDashboardData();
+      Provider.of<DashboardProvider>(context, listen: false)
+          .loadDashboardData();
     });
   }
 
@@ -61,20 +62,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                    icon: const Icon(Icons.notifications_outlined,
+                        color: Colors.white),
                     onPressed: () {
                       // Navigate to notifications
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+                    icon: const Icon(Icons.account_circle_outlined,
+                        color: Colors.white),
                     onPressed: () {
                       context.go('/profile');
                     },
                   ),
                 ],
               ),
-              
+
               // Dashboard Content
               SliverPadding(
                 padding: const EdgeInsets.all(16),
@@ -82,24 +85,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   delegate: SliverChildListDelegate([
                     // Quick Stats
                     _buildQuickStats(dashboardProvider),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Quick Actions
                     _buildQuickActions(),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Recent Applications
                     _buildRecentApplications(dashboardProvider),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Services
                     _buildServices(),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Notifications
                     _buildNotifications(dashboardProvider),
                   ]),
@@ -172,8 +175,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               'Your Business Overview',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -210,7 +213,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: [
         Container(
@@ -225,15 +229,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
         ),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-          ),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -247,8 +251,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           'Quick Actions',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -314,8 +318,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               'Recent Applications',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             TextButton(
               onPressed: () {
@@ -326,14 +330,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        ...provider.recentApplications.map((application) => 
-          Card(
+        ...provider.recentApplications.map(
+          (application) => Card(
             margin: const EdgeInsets.only(bottom: 8),
             child: ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(application['status']).withOpacity(0.1),
+                  color:
+                      _getStatusColor(application['status']).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -353,7 +358,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-        ).toList(),
+        ),
       ],
     );
   }
@@ -365,8 +370,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           'Our Services',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
         GridView.count(
@@ -420,12 +425,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           'Recent Notifications',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: 16),
-        ...provider.notifications.map((notification) => 
-          NotificationCard(
+        ...provider.notifications.map(
+          (notification) => NotificationCard(
             title: notification['title'],
             message: notification['message'],
             time: notification['time'],
@@ -434,7 +439,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Handle notification tap
             },
           ),
-        ).toList(),
+        ),
       ],
     );
   }

@@ -51,7 +51,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -60,12 +60,11 @@ class CustomTextField extends StatelessWidget {
             label!,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onBackground,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
         ],
-        
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -78,11 +77,13 @@ class CustomTextField extends StatelessWidget {
           onTap: onTap,
           onChanged: onChanged,
           onFieldSubmitted: onSubmitted,
-          validator: validators != null ? FormBuilderValidators.compose(validators) : null,
+          validator: validators != null
+              ? FormBuilderValidators.compose(validators)
+              : null,
           inputFormatters: inputFormatters,
           focusNode: focusNode,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
           decoration: InputDecoration(
             hintText: hintText,
@@ -92,7 +93,9 @@ class CustomTextField extends StatelessWidget {
             suffixIcon: suffixIcon,
             counterText: maxLength != null ? null : '',
             filled: true,
-            fillColor: enabled ? Colors.white : theme.colorScheme.surface.withOpacity(0.5),
+            fillColor: enabled
+                ? Colors.white
+                : theme.colorScheme.surface.withOpacity(0.5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(

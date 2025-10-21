@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../config/theme/app_colors.dart';
 
 class ActivitiesScreen extends StatefulWidget {
-  const ActivitiesScreen({Key? key}) : super(key: key);
+  const ActivitiesScreen({super.key});
 
   @override
   State<ActivitiesScreen> createState() => _ActivitiesScreenState();
@@ -55,11 +55,12 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: LinearProgressIndicator(
                     value: 0.2,
                     backgroundColor: AppColors.lightGrey,
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.primary),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -70,7 +71,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
               ],
             ),
           ),
-          
+
           // Title
           Padding(
             padding: const EdgeInsets.all(24),
@@ -91,7 +92,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
               ],
             ),
           ),
-          
+
           // Activities List
           Expanded(
             child: ListView.builder(
@@ -100,14 +101,15 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
               itemBuilder: (context, index) {
                 final activity = _activities[index];
                 final isSelected = _selectedActivities.contains(activity['id']);
-                
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.lightGrey,
+                      color:
+                          isSelected ? AppColors.primary : AppColors.lightGrey,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -130,7 +132,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                     ),
                     subtitle: Text(activity['description']),
                     secondary: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -149,7 +152,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
               },
             ),
           ),
-          
+
           // Bottom Navigation
           Container(
             padding: const EdgeInsets.all(24),
@@ -174,7 +177,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _selectedActivities.isNotEmpty ? _handleNext : null,
+                    onPressed:
+                        _selectedActivities.isNotEmpty ? _handleNext : null,
                     child: const Text('Next'),
                   ),
                 ),
