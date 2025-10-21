@@ -10,7 +10,7 @@ import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/loading_indicator.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -249,8 +249,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.bodySmall,
-                            children: [
-                              const TextSpan(text: 'I agree to the '),
+                            children: const [
+                              TextSpan(text: 'I agree to the '),
                               TextSpan(
                                 text: 'Terms and Conditions',
                                 style: TextStyle(
@@ -258,7 +258,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
-                              const TextSpan(text: ' and '),
+                              TextSpan(text: ' and '),
                               TextSpan(
                                 text: 'Privacy Policy',
                                 style: TextStyle(

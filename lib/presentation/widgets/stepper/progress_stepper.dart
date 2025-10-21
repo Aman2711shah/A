@@ -7,11 +7,11 @@ class ProgressStepper extends StatelessWidget {
   final List<int> completedSteps;
 
   const ProgressStepper({
-    Key? key,
+    super.key,
     required this.currentStep,
     required this.totalSteps,
     this.completedSteps = const [],
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

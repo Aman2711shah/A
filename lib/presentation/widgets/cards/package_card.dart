@@ -8,11 +8,11 @@ class PackageCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PackageCard({
-    Key? key,
+    super.key,
     required this.package,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

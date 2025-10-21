@@ -14,21 +14,21 @@ dependencies:
   cupertino_icons: ^1.0.6
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.9
-  lottie: ^2.7.0
+  lottie: ^3.3.2
   animations: ^2.0.11
   shimmer: ^3.0.0
 
   # State Management
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
   provider: ^6.1.1
-  get_it: ^7.6.4
+  get_it: ^8.2.0
 
   # Network & API
   dio: ^5.4.0
   retrofit: ^4.0.3
   pretty_dio_logger: ^1.3.1
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^7.0.0
 
   # Local Database
   sqflite: ^2.3.0
@@ -37,8 +37,8 @@ dependencies:
   path_provider: ^2.1.1
 
   # Authentication & Security
-  flutter_secure_storage: ^9.0.0
-  local_auth: ^2.1.7
+  flutter_secure_storage: ^10.0.0-beta.4
+  local_auth: ^3.0.0
   crypto: ^3.0.3
 
   # File Handling & Documents
@@ -46,49 +46,49 @@ dependencies:
   image_picker: ^1.0.7
   # image_cropper: ^5.0.1
   path: ^1.8.3
-  permission_handler: ^11.1.0
+  permission_handler: ^12.0.1
   open_filex: ^4.3.4
 
   # Firebase
-  firebase_core: ^2.24.2
-  firebase_analytics: ^10.8.0
-  firebase_crashlytics: ^3.4.9
-  firebase_messaging: ^14.7.10
+  firebase_core: ^4.2.0
+  firebase_analytics: ^12.0.3
+  firebase_crashlytics: ^5.0.3
+  firebase_messaging: ^16.0.3
 
   # Maps & Location
   google_maps_flutter: ^2.5.3
-  geolocator: ^10.1.0
-  geocoding: ^2.1.1
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
 
   # Payment
-  flutter_stripe: ^10.1.1
+  flutter_stripe: ^12.0.2
 
   # Utilities
   intl: ^0.20.2
   url_launcher: ^6.2.2
-  share_plus: ^7.2.1
-  device_info_plus: ^9.1.1
-  package_info_plus: ^5.0.1
+  share_plus: ^12.0.1
+  device_info_plus: ^12.2.0
+  package_info_plus: ^8.3.1
   uuid: ^4.2.2
   cached_network_image: ^3.3.1
-  flutter_dotenv: ^5.1.0
+  flutter_dotenv: ^6.0.0
   json_annotation: ^4.9.0
 
   # Notifications
-  # flutter_local_notifications: ^16.3.2
+  flutter_local_notifications: ^19.5.0
 
   # UI Components
-  fl_chart: ^0.66.0
-  dotted_border: ^2.1.0
+  fl_chart: ^1.1.1
+  dotted_border: ^3.1.0
   pin_code_fields: ^8.0.1
   smooth_page_indicator: ^1.1.0
 
   # Forms & Validation
-  # form_builder_validators: ^9.1.0
-  # flutter_form_builder: ^9.1.1
+  form_builder_validators: ^11.2.0
+  flutter_form_builder: ^10.2.0
 
   # Navigation & Routing
-  go_router: ^12.1.3
+  go_router: ^16.2.5
   
   # Storage
   shared_preferences: ^2.2.2
@@ -96,7 +96,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^6.0.0
   
   # Code Generation
   build_runner: ^2.4.7

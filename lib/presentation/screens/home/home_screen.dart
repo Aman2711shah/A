@@ -3,7 +3,7 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/routes/route_names.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeContentScreen extends StatelessWidget {
-  const HomeContentScreen({Key? key}) : super(key: key);
+  const HomeContentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +118,9 @@ class HomeContentScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: AppColors.primaryGradient,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
@@ -385,7 +385,7 @@ class HomeContentScreen extends StatelessWidget {
 
 // Placeholder screens for other tabs
 class ServicesScreen extends StatelessWidget {
-  const ServicesScreen({Key? key}) : super(key: key);
+  const ServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -397,7 +397,7 @@ class ServicesScreen extends StatelessWidget {
 }
 
 class CommunityScreen extends StatelessWidget {
-  const CommunityScreen({Key? key}) : super(key: key);
+  const CommunityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +409,7 @@ class CommunityScreen extends StatelessWidget {
 }
 
 class GrowthScreen extends StatelessWidget {
-  const GrowthScreen({Key? key}) : super(key: key);
+  const GrowthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +421,7 @@ class GrowthScreen extends StatelessWidget {
 }
 
 class MoreScreen extends StatelessWidget {
-  const MoreScreen({Key? key}) : super(key: key);
+  const MoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/routes/route_names.dart';
 
 class SummaryScreen extends StatelessWidget {
-  const SummaryScreen({Key? key}) : super(key: key);
+  const SummaryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

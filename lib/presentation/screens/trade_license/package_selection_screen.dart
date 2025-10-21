@@ -5,7 +5,7 @@ import '../../widgets/stepper/progress_stepper.dart';
 import '../../widgets/cards/package_card.dart';
 
 class PackageSelectionScreen extends StatefulWidget {
-  const PackageSelectionScreen({Key? key}) : super(key: key);
+  const PackageSelectionScreen({super.key});
 
   @override
   State<PackageSelectionScreen> createState() => _PackageSelectionScreenState();

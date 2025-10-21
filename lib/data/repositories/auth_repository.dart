@@ -95,10 +95,6 @@ class AuthRepository {
 
       return await localAuth.authenticate(
         localizedReason: 'Authenticate to access WAZEET',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
       );
     } catch (e) {
       return false;
