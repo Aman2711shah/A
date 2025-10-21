@@ -60,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       try {
         await authProvider.register(
           _firstNameController.text.trim(),
@@ -69,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _phoneController.text.trim(),
           _passwordController.text,
         );
-        
+
         if (mounted) {
           context.go('/dashboard');
         }
@@ -109,27 +109,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 20),
-                      
+
                       Text(
                         'Join WAZEET Today',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       Text(
                         'Start your business journey in the UAE',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
-                        ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.7),
+                            ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // Name Fields
                       Row(
                         children: [
@@ -158,9 +164,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Email Field
                       CustomTextField(
                         controller: _emailController,
@@ -173,9 +179,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           FormBuilderValidators.email(),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Phone Field
                       CustomTextField(
                         controller: _phoneController,
@@ -187,9 +193,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           FormBuilderValidators.required(),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Password Field
                       CustomTextField(
                         controller: _passwordController,
@@ -199,7 +205,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.lock_outlined,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            _obscurePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
@@ -212,9 +220,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           FormBuilderValidators.minLength(6),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Confirm Password Field
                       CustomTextField(
                         controller: _confirmPasswordController,
@@ -224,11 +232,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.lock_outlined,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                            _obscureConfirmPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),
@@ -236,9 +247,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           FormBuilderValidators.required(),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Terms and Conditions
                       Row(
                         children: [
@@ -277,18 +288,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // Register Button
                       CustomButton(
                         text: 'Create Account',
                         onPressed: _handleRegister,
                         isLoading: authProvider.isLoading,
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Login Link
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

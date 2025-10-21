@@ -33,13 +33,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       try {
         await authProvider.login(
           _emailController.text.trim(),
           _passwordController.text,
         );
-        
+
         if (mounted) {
           context.go('/dashboard');
         }
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 60),
-                    
+
                     // Logo and Title
                     Column(
                       children: [
@@ -90,23 +90,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 24),
                         Text(
                           'Welcome to WAZEET',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Your Business Setup Partner in UAE',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 48),
-                    
+
                     // Login Form
                     FormBuilder(
                       key: _formKey,
@@ -123,9 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               FormBuilderValidators.email(),
                             ],
                           ),
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           CustomTextField(
                             controller: _passwordController,
                             label: 'Password',
@@ -134,7 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icons.lock_outlined,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -147,9 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               FormBuilderValidators.minLength(6),
                             ],
                           ),
-                          
+
                           const SizedBox(height: 8),
-                          
+
                           // Forgot Password
                           Align(
                             alignment: Alignment.centerRight,
@@ -160,18 +169,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: const Text('Forgot Password?'),
                             ),
                           ),
-                          
+
                           const SizedBox(height: 32),
-                          
+
                           // Login Button
                           CustomButton(
                             text: 'Sign In',
                             onPressed: _handleLogin,
                             isLoading: authProvider.isLoading,
                           ),
-                          
+
                           const SizedBox(height: 24),
-                          
+
                           // Register Link
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

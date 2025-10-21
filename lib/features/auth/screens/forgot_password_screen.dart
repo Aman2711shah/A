@@ -33,7 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         // Simulate API call
         await Future.delayed(const Duration(seconds: 2));
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -41,7 +41,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           context.go('/auth/login');
         }
       } catch (e) {
@@ -80,7 +80,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              
+
               // Icon
               Center(
                 child: Container(
@@ -97,29 +97,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               Text(
                 'Forgot Password?',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Text(
                 'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Email Form
               FormBuilder(
                 key: _formKey,
@@ -136,9 +139,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         FormBuilderValidators.email(),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Send Reset Link Button
                     CustomButton(
                       text: 'Send Reset Link',
@@ -148,9 +151,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Back to Login
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
