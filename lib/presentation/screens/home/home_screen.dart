@@ -11,6 +11,8 @@ import '../../../features/community/providers/community_provider.dart';
 import '../../../features/community/models/community_post.dart';
 import '../../../features/community/widgets/community_post_card.dart';
 import '../../../features/community/widgets/community_post_composer.dart';
+import '../../../features/services/models/service_catalog.dart';
+import '../../../features/services/providers/services_provider.dart';
 import '../../../shared/dialogs/consultation_request_dialog.dart';
 import '../../../features/profile/ui/more_screen_extension.dart'; // INSERT: profile management
 
@@ -32,53 +34,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          const HomeContentScreen(),
-          const ServicesScreen(),
-          const CommunityScreen(),
-          GrowthScreen(onNavigateToServices: () => _changeTab(1)),
-          const MoreScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business_outlined),
-            activeIcon: Icon(Icons.business),
-            label: 'Services',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
-            activeIcon: Icon(Icons.people),
-            label: 'Community',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up_outlined),
-            activeIcon: Icon(Icons.trending_up),
-            label: 'Growth',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            label: 'More',
-          ),
-        ],
+    return ChangeNotifierProvider(
+      create: (_) => ServicesProvider(),
+      child: Scaffold(
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            const HomeContentScreen(),
+            const ServicesScreen(),
+            const CommunityScreen(),
+            GrowthScreen(onNavigateToServices: () => _changeTab(1)),
+            const MoreScreen(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.grey,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.business_outlined),
+              activeIcon: Icon(Icons.business),
+              label: 'Services',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people_outline),
+              activeIcon: Icon(Icons.people),
+              label: 'Community',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.trending_up_outlined),
+              activeIcon: Icon(Icons.trending_up),
+              label: 'Growth',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.menu),
+              label: 'More',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -412,55 +417,81 @@ class HomeContentScreen extends StatelessWidget {
 }
 
 // Placeholder screens for other tabs
-class ServicesScreen extends StatefulWidget {
+class ServicesScreen extends StatelessWidget {
   const ServicesScreen({super.key});
 
   @override
-  State<ServicesScreen> createState() => _ServicesScreenState();
+  Widget build(BuildContext context) {
+    return Consumer<ServicesProvider>(
+      builder: (context, provider, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Services'),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: provider.isLoading ? null : provider.refresh,
+              ),
+            ],
+          ),
+          body: RefreshIndicator(
+            onRefresh: provider.refresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _ServicesHero(),
+                    const SizedBox(height: 24),
+                    _ServicesProgress(step: provider.step),
+                    const SizedBox(height: 16),
+                    if (provider.isLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 48),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else if (provider.error != null)
+                      _ServicesError(
+                        message: provider.error!,
+                        onRetry: () => provider.refresh(),
+                      )
+                    else if (provider.categories.isEmpty)
+                      const _ServicesEmptyState()
+                    else ...[
+                      if (provider.step == 0)
+                        _CategoryList(provider: provider)
+                      else if (provider.step == 1)
+                        _TypeList(provider: provider)
+                      else if (provider.step == 2)
+                        _SubServiceList(provider: provider)
+                      else
+                        _ReviewSection(provider: provider),
+                    ],
+                    const SizedBox(height: 24),
+                    _ServicesNavBar(provider: provider),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _ServicesScreenState extends State<ServicesScreen> {
-  // Step control
-  int _step = 0; // 0: category, 1: type, 2: sub, 3: review
-
-  // Selections
-  ServiceCategory? _selectedCategory;
-  ServiceType? _selectedType;
-  SubService? _selectedSub;
+class _ServicesHero extends StatelessWidget {
+  const _ServicesHero();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Services'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHero(),
-            const SizedBox(height: 24),
-            _buildProgress(),
-            const SizedBox(height: 16),
-            // Main content by step
-            if (_step == 0) _buildCategoryList(),
-            if (_step == 1) _buildTypeList(),
-            if (_step == 2) _buildSubList(),
-            if (_step == 3) _buildReview(),
-            const SizedBox(height: 24),
-            _buildNavBar(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // =============== UI Sections ===============
-  Widget _buildHero() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -492,17 +523,24 @@ class _ServicesScreenState extends State<ServicesScreen> {
       ),
     );
   }
+}
 
-  Widget _buildProgress() {
-    final titles = [
+class _ServicesProgress extends StatelessWidget {
+  const _ServicesProgress({required this.step});
+
+  final int step;
+
+  @override
+  Widget build(BuildContext context) {
+    const titles = [
       'Select Category',
       'Select Service',
       'Select Sub-Service',
       'Review'
     ];
     return Row(
-      children: List.generate(4, (i) {
-        final active = i <= _step;
+      children: List.generate(4, (index) {
+        final active = index <= step;
         return Expanded(
           child: Column(
             children: [
@@ -516,18 +554,21 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: Text('${i + 1}',
-                          style: TextStyle(
-                              color: active ? Colors.white : Colors.black54,
-                              fontWeight: FontWeight.bold)),
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          color: active ? Colors.white : Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                  if (i < 3)
+                  if (index < 3)
                     Expanded(
                       child: Container(
                         height: 2,
                         margin: const EdgeInsets.symmetric(horizontal: 6),
-                        color: i < _step
+                        color: index < step
                             ? AppColors.primary
                             : Colors.grey.shade300,
                       ),
@@ -536,1189 +577,512 @@ class _ServicesScreenState extends State<ServicesScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                titles[i],
+                titles[index],
                 style: TextStyle(
                   fontSize: 12,
-                  color: active ? AppColors.primary : AppColors.textSecondary,
+                  color: active
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
                   fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                 ),
-              )
+              ),
             ],
           ),
         );
       }),
     );
   }
+}
 
-  Widget _buildCategoryList() {
+class _CategoryList extends StatelessWidget {
+  const _CategoryList({required this.provider});
+
+  final ServicesProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Our Services',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        ...serviceCatalog.map(_categoryTile),
-      ],
-    );
-  }
-
-  Widget _categoryTile(ServiceCategory c) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Icon(Icons.apps, color: AppColors.primary, size: 20),
-        ),
-        title: Text(c.name),
-        subtitle: Text('${c.types.length} services available'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          setState(() {
-            _selectedCategory = c;
-            _selectedType = null;
-            _selectedSub = null;
-            _step = 1;
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildTypeList() {
-    final c = _selectedCategory!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _categoryHeader(c),
-        const SizedBox(height: 12),
-        _overviewCard(c),
-        const SizedBox(height: 12),
-        const Text('Choose a Service',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        ...c.types.map(
-          (t) => _selectionTile<ServiceType>(
-            option: t,
-            groupValue: _selectedType,
-            onSelect: (value) {
-              setState(() {
-                _selectedType = value;
-                _selectedSub = null;
-              });
-            },
-            title: t.name,
-            subtitle: '${t.subServices.length} options',
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubList() {
-    final t = _selectedType!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _categoryHeader(_selectedCategory!),
-        const SizedBox(height: 8),
-        Text('Service: ${t.name}',
-            style: const TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
-        ...t.subServices.map(
-          (s) => _selectionTile<SubService>(
-            option: s,
-            groupValue: _selectedSub,
-            onSelect: (value) => setState(() => _selectedSub = value),
-            title: s.name,
-            subtitle:
-                'Premium AED ${s.premiumCost} • ${s.premiumTimeline}',
-            trailing: const Icon(Icons.task_alt, color: AppColors.primary),
+        const Text(
+          'Service Categories',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
-        if (_selectedSub != null) _docsCard(_selectedSub!),
+        ...provider.categories.map((category) {
+          final isSelected = provider.selectedCategory?.id == category.id;
+          return Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color:
+                    isSelected ? AppColors.primary : Colors.grey.shade200,
+              ),
+            ),
+            child: ListTile(
+              onTap: () => provider.selectCategory(category),
+              title: Text(category.name),
+              subtitle: Text(category.subtitle),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            ),
+          );
+        }),
       ],
     );
   }
+}
 
-  Widget _buildReview() {
-    final c = _selectedCategory!;
-    final s = _selectedSub!;
+class _TypeList extends StatelessWidget {
+  const _TypeList({required this.provider});
+
+  final ServicesProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final category = provider.selectedCategory;
+    if (category == null) {
+      return const SizedBox();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _categoryHeader(c),
+        Row(
+          children: [
+            IconButton(
+              onPressed: provider.previousStep,
+              icon: const Icon(Icons.arrow_back),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    category.subtitle,
+                    style:
+                        const TextStyle(color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 12),
-        _estimateCard(s),
+        ...category.types.map((type) {
+          final selected = provider.selectedType == type;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              onTap: () => provider.selectType(type),
+              title: Text(type.name),
+              subtitle: Text(
+                type.description ??
+                    '${type.subServices.length} options available',
+              ),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: selected ? AppColors.primary : null,
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}
+
+class _SubServiceList extends StatelessWidget {
+  const _SubServiceList({required this.provider});
+
+  final ServicesProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final category = provider.selectedCategory;
+    final type = provider.selectedType;
+    if (category == null || type == null) {
+      return const SizedBox();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            IconButton(
+              onPressed: provider.previousStep,
+              icon: const Icon(Icons.arrow_back),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    type.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    category.name,
+                    style:
+                        const TextStyle(color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...type.subServices.map((sub) {
+          final selected = provider.selectedSubService == sub;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              onTap: () => provider.selectSubService(sub),
+              title: Text(sub.name),
+              subtitle: Text(
+                'Premium AED ${sub.premiumCost} • ${sub.premiumTimeline}',
+              ),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: selected ? AppColors.primary : null,
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}
+
+class _ReviewSection extends StatelessWidget {
+  const _ReviewSection({required this.provider});
+
+  final ServicesProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final category = provider.selectedCategory;
+    final type = provider.selectedType;
+    final sub = provider.selectedSubService;
+    if (category == null || type == null || sub == null) {
+      return const SizedBox();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            IconButton(
+              onPressed: provider.previousStep,
+              icon: const Icon(Icons.arrow_back),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    sub.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${type.name} • ${category.name}',
+                    style:
+                        const TextStyle(color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _estimateCard(sub),
         const SizedBox(height: 12),
         _recommendedCard(),
         const SizedBox(height: 12),
-        _ctaCard(s),
+        _reviewCta(context, provider),
       ],
     );
   }
+}
 
-  Widget _selectionTile<T>({
-    required T option,
-    required T? groupValue,
-    required ValueChanged<T> onSelect,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-  }) {
-    final isSelected = option == groupValue;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        onTap: () => onSelect(option),
-        leading: Icon(
-          isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-          color: isSelected ? AppColors.primary : AppColors.textSecondary,
-        ),
-        title: Text(title),
-        subtitle: subtitle != null ? Text(subtitle) : null,
-        trailing: trailing,
-      ),
-    );
-  }
+class _ServicesNavBar extends StatelessWidget {
+  const _ServicesNavBar({required this.provider});
 
-  Widget _categoryHeader(ServiceCategory c) {
+  final ServicesProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final showNext = provider.step < 3;
+    final canNext = provider.canProceed;
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            setState(() {
-              if (_step == 1) {
-                _step = 0;
-                _selectedCategory = null;
-              } else if (_step == 2) {
-                _step = 1;
-                _selectedSub = null;
-              } else if (_step == 3) {
-                _step = 2;
-              }
-            });
-          },
-        ),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(c.name,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
-              Text(c.subtitle,
-                  style: const TextStyle(color: AppColors.textSecondary)),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _overviewCard(ServiceCategory c) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: const [
-              Icon(Icons.info_outline),
-              SizedBox(width: 8),
-              Text('Overview', style: TextStyle(fontWeight: FontWeight.bold))
-            ]),
-            const SizedBox(height: 8),
-            Text(c.overview),
-            const SizedBox(height: 12),
-            Row(children: const [
-              Icon(Icons.check_circle_outline, color: Colors.green),
-              SizedBox(width: 8),
-              Text('Key Benefits',
-                  style: TextStyle(fontWeight: FontWeight.bold))
-            ]),
-            const SizedBox(height: 8),
-            ...c.benefits.map((b) => Row(children: [
-                  const Icon(Icons.check, size: 16, color: Colors.green),
-                  const SizedBox(width: 6),
-                  Expanded(child: Text(b))
-                ])),
-            const SizedBox(height: 12),
-            Row(children: const [
-              Icon(Icons.assignment_outlined, color: Colors.orange),
-              SizedBox(width: 8),
-              Text('Key Requirements',
-                  style: TextStyle(fontWeight: FontWeight.bold))
-            ]),
-            const SizedBox(height: 8),
-            ...c.requirements.map((r) => Row(children: [
-                  const Icon(Icons.circle, size: 8, color: Colors.orange),
-                  const SizedBox(width: 6),
-                  Expanded(child: Text(r))
-                ])),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _estimateCard(SubService s) {
-    return Column(
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Estimated Timeline',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(s.premiumTimeline),
-                ]),
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  const Text('Estimated Price',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(
-                      'AED ${s.premiumCost} (Premium)\nAED ${s.standardCost} (Standard)')
-                ]),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        _docsCard(s),
-      ],
-    );
-  }
-
-  Widget _docsCard(SubService s) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Document Support',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 6),
-            Text(s.documents),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _recommendedCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Recommended Services',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.lightbulb_outline),
-              title: Text('Business Consultation'),
-              subtitle: Text('Expert guidance needed'),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.description_outlined),
-              title: Text('Document Support'),
-              subtitle: Text('Additional documentation'),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _ctaCard(SubService selectedSub) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'Ready to Get Started?',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-                'Start your application process and get an instant cost estimate',
-                textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      showConsultationRequestDialog(
-                        context,
-                        topic:
-                            'Quote request for ${selectedSub.name} services',
-                      );
-                    },
-                    child: const Text('Get Quote'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const CompanySetupScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text('Start Application Process'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavBar() {
-    final canNext = (_step == 0 && _selectedCategory != null) ||
-        (_step == 1 && _selectedType != null) ||
-        (_step == 2 && _selectedSub != null);
-    return Row(
-      children: [
-        if (_step > 0)
+        if (provider.step > 0)
           Expanded(
             child: OutlinedButton(
-              onPressed: () {
-                setState(() {
-                  if (_step > 0) _step -= 1;
-                });
-              },
+              onPressed: provider.previousStep,
               child: const Text('Back'),
             ),
           ),
-        if (_step > 0) const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: canNext
-                ? () {
-                    setState(() {
-                      if (_step < 3) {
-                        _step += 1;
-                      }
-                    });
-                  }
-                : null,
-            child: Text(_step < 3 ? 'Next' : 'Done'),
+        if (provider.step > 0 && showNext) const SizedBox(width: 12),
+        if (showNext)
+          Expanded(
+            child: ElevatedButton(
+              onPressed: canNext ? provider.nextStep : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Next'),
+            ),
           ),
-        ),
       ],
     );
   }
 }
 
-// ===================== Data Model & Catalog =====================
-class ServiceCategory {
-  final String name;
-  final String subtitle;
-  final String overview;
-  final List<String> benefits;
-  final List<String> requirements;
-  final List<ServiceType> types;
+class _ServicesError extends StatelessWidget {
+  const _ServicesError({required this.message, required this.onRetry});
 
-  const ServiceCategory({
-    required this.name,
-    required this.subtitle,
-    required this.overview,
-    required this.benefits,
-    required this.requirements,
-    required this.types,
-  });
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Unable to load services',
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: const TextStyle(color: Colors.red),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: onRetry,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class ServiceType {
-  final String name;
-  final List<SubService> subServices;
-  const ServiceType({required this.name, required this.subServices});
+class _ServicesEmptyState extends StatelessWidget {
+  const _ServicesEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          const Icon(Icons.auto_awesome, size: 48, color: AppColors.primary),
+          const SizedBox(height: 12),
+          const Text(
+            'Services catalogue coming soon',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'We are curating service packages for you. Check back in a bit or request a custom consultation.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () => showConsultationRequestDialog(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Talk to an expert'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class SubService {
-  final String name;
-  final num premiumCost;
-  final num standardCost;
-  final String premiumTimeline;
-  final String standardTimeline;
-  final String documents;
-  const SubService({
-    required this.name,
-    required this.premiumCost,
-    required this.standardCost,
-    required this.premiumTimeline,
-    required this.standardTimeline,
-    required this.documents,
-  });
+Widget _estimateCard(SubService sub) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Cost Estimate',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Premium'),
+                    Text(
+                      'AED ${sub.premiumCost}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(sub.premiumTimeline,
+                        style:
+                            const TextStyle(color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Standard'),
+                    Text(
+                      'AED ${sub.standardCost}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(sub.standardTimeline,
+                        style:
+                            const TextStyle(color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
-// Seeded catalog (subset from the spreadsheet JSON) — extend as needed.
-final List<ServiceCategory> serviceCatalog = [
-  ServiceCategory(
-    name: 'Visa & Immigration',
-    subtitle: 'Complete visa processing and immigration services',
-    overview:
-        'Handle all your UAE visa and immigration needs with our comprehensive services. From employment and dependent visas to investor and freelance permits, we ensure smooth processing and compliance.',
-    benefits: const [
-      'Multiple visa type options',
-      'Fast track processing available',
-      'Family visa facilitation',
-      'Long-term residence solutions',
-      'Renewal and extension support',
-      'Immigration consulting',
-    ],
-    requirements: const [
-      'Valid passport with minimum 6 month validity',
-      'Clear passport-size photo',
-      'Trade license/offer letter where applicable',
-    ],
-    types: [
-      ServiceType(
-        name: 'Employment',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 4000,
-            standardCost: 3300,
-            premiumTimeline: '5-6 days',
-            standardTimeline: '6-8 days',
-            documents: 'Passport, photo, offer letter, license copy',
+Widget _recommendedCard() {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Text(
+            'What’s included',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          SubService(
-            name: 'Renewal',
-            premiumCost: 3500,
-            standardCost: 2900,
-            premiumTimeline: '4-5 days',
-            standardTimeline: '5-6 days',
-            documents: 'Passport, visa, Emirates ID',
+          SizedBox(height: 8),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.handshake),
+            title: Text('Dedicated incorporation consultant'),
           ),
-          SubService(
-            name: 'Cancel',
-            premiumCost: 1350,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Passport, visa, cancellation form',
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.description_outlined),
+            title: Text('Document preparation & submission'),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.credit_card),
+            title: Text('Bank account introductions'),
           ),
         ],
       ),
-      ServiceType(
-        name: 'Dependent',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 3500,
-            standardCost: 2900,
-            premiumTimeline: '4-5 days',
-            standardTimeline: '5-7 days',
-            documents:
-                "Sponsor's passport, visa, birth/marriage certificate, tenancy",
-          ),
-          SubService(
-            name: 'Renewal',
-            premiumCost: 3000,
-            standardCost: 2500,
-            premiumTimeline: '3-4 days',
-            standardTimeline: '4-5 days',
-            documents: 'Sponsor documents, visa, tenancy',
-          ),
-          SubService(
-            name: 'Cancel',
-            premiumCost: 1350,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Passport, visa, cancellation form',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Investor',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 4700,
-            standardCost: 4000,
-            premiumTimeline: '5-7 days',
-            standardTimeline: '7-10 days',
-            documents: 'Passport, photo, Emirates ID copy, trade license',
-          ),
-          SubService(
-            name: 'Renewal',
-            premiumCost: 3500,
-            standardCost: 2900,
-            premiumTimeline: '4-5 days',
-            standardTimeline: '5-7 days',
-            documents: 'Passport, visa, Emirates ID',
-          ),
-          SubService(
-            name: 'Cancel',
-            premiumCost: 1350,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Passport, visa, cancellation form',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Freelance',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 8000,
-            standardCost: 6500,
-            premiumTimeline: '6-8 days',
-            standardTimeline: '8-10 days',
-            documents: 'Passport, photo, portfolio/NOC, bank statement',
-          ),
-          SubService(
-            name: 'Renewal',
-            premiumCost: 7500,
-            standardCost: 6000,
-            premiumTimeline: '5-6 days',
-            standardTimeline: '7-8 days',
-            documents: 'Passport, visa, Emirates ID',
-          ),
-          SubService(
-            name: 'Cancel',
-            premiumCost: 1350,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Passport, visa, cancellation form',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Golden Visa',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 10000,
-            standardCost: 8500,
-            premiumTimeline: '10-12 days',
-            standardTimeline: '15-20 days',
-            documents: 'Passport, Emirates ID, investment proof',
-          ),
-          SubService(
-            name: 'Renewal',
-            premiumCost: 9000,
-            standardCost: 8000,
-            premiumTimeline: '8-10 days',
-            standardTimeline: '12-15 days',
-            documents: 'Passport, Emirates ID, renewal request',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Housemaid',
-        subServices: const [
-          SubService(
-            name: 'Issuance',
-            premiumCost: 6500,
-            standardCost: 5500,
-            premiumTimeline: '7-10 days',
-            standardTimeline: '10-14 days',
-            documents:
-                'Sponsor passport/visa, salary proof, maid passport/photo',
-          ),
-          SubService(
-            name: 'Cancel',
-            premiumCost: 1350,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Passport, visa, cancellation form',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Emirates ID Typing',
-        subServices: const [
-          SubService(
-            name: 'Application',
-            premiumCost: 780,
-            standardCost: 700,
-            premiumTimeline: '1 day',
-            standardTimeline: '1-2 days',
-            documents: 'Passport, visa page, photo',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Change of Status',
-        subServices: const [
-          SubService(
-            name: 'Processing',
-            premiumCost: 1250,
-            standardCost: 1100,
-            premiumTimeline: '2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Entry permit, visa, passport',
-          ),
-        ],
-      ),
-    ],
-  ),
-  // --- FTA (subset) ---
-  ServiceCategory(
-    name: 'Federal Tax Authority',
-    subtitle: 'VAT, Corporate Tax, Excise & Certificates',
-    overview:
-        'End-to-end tax compliance including registration, amendments, return filings and certifications.',
-    benefits: const [
-      'Compliance first',
-      'Experienced tax team',
-      'On-time filings'
-    ],
-    requirements: const [
-      'Trade license',
-      'Emirates ID/Passport',
-      'Basic financials where applicable'
-    ],
-    types: const [
-      ServiceType(
-        name: 'Corporate Tax',
-        subServices: [
-          SubService(
-            name: 'Registration',
-            premiumCost: 1000,
-            standardCost: 500,
-            premiumTimeline: '1-2 days',
-            standardTimeline: '2-3 working days',
-            documents: 'Trade license, ID/Passport, authorization proof',
-          ),
-          SubService(
-            name: 'Return Submission',
-            premiumCost: 700,
-            standardCost: 500,
-            premiumTimeline: '1 day',
-            standardTimeline: '2-3 working days',
-            documents: 'Audited financial statements, tax calculation data',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Value Added Tax',
-        subServices: [
-          SubService(
-            name: 'Registration',
-            premiumCost: 1000,
-            standardCost: 500,
-            premiumTimeline: '1 day',
-            standardTimeline: '2-3 working days',
-            documents:
-                'Trade license, Emirates ID, financial records, turnover forecast',
-          ),
-          SubService(
-            name: 'VAT Return Filing',
-            premiumCost: 2500,
-            standardCost: 500,
-            premiumTimeline: '1 day',
-            standardTimeline: '2-3 working days',
-            documents: 'VAT invoices, reverse charge data, tax ledger',
-          ),
-        ],
-      ),
-    ],
-  ),
-  // --- Accounting (subset) ---
-  ServiceCategory(
-    name: 'Accounting & Bookkeeping',
-    subtitle: 'Complete financial solutions',
-    overview:
-        'From bookkeeping to VAT and CFO services, we cover all finance ops.',
-    benefits: const [
-      'Accurate books',
-      'On-time compliance',
-      'Actionable reports'
-    ],
-    requirements: const [
-      'Bank statements',
-      'Invoices',
-      'Trial balance (if any)'
-    ],
-    types: const [
-      ServiceType(
-        name: 'Bookkeeping',
-        subServices: [
-          SubService(
-            name: 'Basic Monthly',
-            premiumCost: 1800,
-            standardCost: 1300,
-            premiumTimeline: 'Monthly',
-            standardTimeline: 'Monthly',
-            documents:
-                'Bank statements, sales/purchase invoices, petty cash receipts',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'VAT Return Filing (Quarterly)',
-        subServices: [
-          SubService(
-            name: 'Quarterly Filing',
-            premiumCost: 2500,
-            standardCost: 2000,
-            premiumTimeline: 'Quarterly',
-            standardTimeline: 'Quarterly',
-            documents: 'VAT certificate, VAT invoices, FTA credentials',
-          ),
-        ],
-      ),
-    ],
-  ),
-  // --- Growth Services ---
-  ServiceCategory(
-    name: 'Business Expansion Services',
-    subtitle: 'Branch setup, activity addition, office upgrades',
-    overview:
-        'Expand your business with our comprehensive branch setup, license amendments, and facility management services.',
-    benefits: const [
-      'Fast branch setup',
-      'License amendment support',
-      'Office upgrade assistance',
-      'Business restructuring advisory',
-      'Activity addition services',
-    ],
-    requirements: const [
-      'License copy',
-      'Shareholder ID',
-      'Memorandum of Association (MoA)',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Branch Setup',
-        subServices: [
-          SubService(
-            name: 'Mainland/Freezone/International',
-            premiumCost: 5000,
-            standardCost: 3500,
-            premiumTimeline: '2-5 days',
-            standardTimeline: '5-10 days',
-            documents: 'License copy, shareholder ID, MoA',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'License Amendment',
-        subServices: [
-          SubService(
-            name: 'Additional Activity Addition',
-            premiumCost: 1500,
-            standardCost: 800,
-            premiumTimeline: '1-3 days',
-            standardTimeline: '3-5 days',
-            documents: 'License, application form',
-          ),
-          SubService(
-            name: 'Trade Name Change',
-            premiumCost: 1000,
-            standardCost: 500,
-            premiumTimeline: '1-2 days',
-            standardTimeline: '2-4 days',
-            documents: 'Old license, new name',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Restructuring',
-        subServices: [
-          SubService(
-            name: 'Business Strategy Advisory',
-            premiumCost: 3000,
-            standardCost: 1800,
-            premiumTimeline: '3-5 days',
-            standardTimeline: '7-10 days',
-            documents: 'Business plan, MoA, shareholder IDs',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'Banking & Finance',
-    subtitle: 'Corporate accounts, payment solutions, credit facilities',
-    overview:
-        'Complete banking and financial services including account opening, payment gateways, and trade finance solutions.',
-    benefits: const [
-      'Fast account opening',
-      'Multiple banking partners',
-      'Payment gateway integration',
-      'Trade finance solutions',
-      'Credit facility assistance',
-    ],
-    requirements: const [
-      'Trade license',
-      'Emirates ID',
-      'Business plan',
-      'Bank statements',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Account Opening',
-        subServices: [
-          SubService(
-            name: 'Corporate Bank Account',
-            premiumCost: 1200,
-            standardCost: 600,
-            premiumTimeline: '2-4 days',
-            standardTimeline: '5-7 days',
-            documents: 'License, Emirates ID, MoA, business plan',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Payment Solutions',
-        subServices: [
-          SubService(
-            name: 'Payment Gateway Setup',
-            premiumCost: 2000,
-            standardCost: 1200,
-            premiumTimeline: '3-5 days',
-            standardTimeline: '7-10 days',
-            documents: 'License, website details, bank account',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'Marketing & Sales',
-    subtitle: 'Digital marketing, branding, lead generation',
-    overview:
-        'Boost your business visibility with comprehensive digital marketing, branding, SEO, and content creation services.',
-    benefits: const [
-      'Increased online presence',
-      'Professional branding',
-      'SEO optimization',
-      'Content marketing',
-      'Lead generation',
-    ],
-    requirements: const [
-      'Business details',
-      'Target audience information',
-      'Brand guidelines (if any)',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Digital Marketing',
-        subServices: [
-          SubService(
-            name: 'Social Media Management',
-            premiumCost: 3000,
-            standardCost: 1500,
-            premiumTimeline: 'Monthly',
-            standardTimeline: 'Monthly',
-            documents: 'Business info, brand assets, access credentials',
-          ),
-          SubService(
-            name: 'SEO Services',
-            premiumCost: 2500,
-            standardCost: 1500,
-            premiumTimeline: 'Monthly',
-            standardTimeline: 'Monthly',
-            documents: 'Website access, keyword list, competitor info',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Branding',
-        subServices: [
-          SubService(
-            name: 'Brand Identity Design',
-            premiumCost: 5000,
-            standardCost: 3000,
-            premiumTimeline: '7-10 days',
-            standardTimeline: '10-14 days',
-            documents: 'Business concept, target market, preferences',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'International Trade',
-    subtitle: 'Import/export, customs, logistics solutions',
-    overview:
-        'Comprehensive international trade services including import/export licenses, customs clearance, and shipping logistics.',
-    benefits: const [
-      'Import/export licensing',
-      'Customs clearance',
-      'Shipping coordination',
-      'Trade compliance',
-      'Logistics support',
-    ],
-    requirements: const [
-      'Trade license',
-      'Import/export documents',
-      'Product details',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Trade Licensing',
-        subServices: [
-          SubService(
-            name: 'Import/Export License',
-            premiumCost: 2500,
-            standardCost: 1500,
-            premiumTimeline: '3-5 days',
-            standardTimeline: '5-7 days',
-            documents: 'Trade license, product list, business plan',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Customs & Logistics',
-        subServices: [
-          SubService(
-            name: 'Customs Clearance',
-            premiumCost: 1500,
-            standardCost: 1000,
-            premiumTimeline: '1-2 days',
-            standardTimeline: '2-3 days',
-            documents: 'Invoice, packing list, certificate of origin',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'Tax & Compliance',
-    subtitle: 'VAT, corporate tax, audit and financial reporting',
-    overview:
-        'Complete tax and compliance services including VAT registration, corporate tax filing, and audit services.',
-    benefits: const [
-      'Tax compliance',
-      'Expert tax consultants',
-      'Audit support',
-      'Financial reporting',
-      'Penalty avoidance',
-    ],
-    requirements: const [
-      'Trade license',
-      'Financial statements',
-      'Tax records',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Tax Services',
-        subServices: [
-          SubService(
-            name: 'VAT Registration & Filing',
-            premiumCost: 2500,
-            standardCost: 1500,
-            premiumTimeline: 'Quarterly',
-            standardTimeline: 'Quarterly',
-            documents: 'License, financials, VAT invoices',
-          ),
-          SubService(
-            name: 'Corporate Tax Filing',
-            premiumCost: 3000,
-            standardCost: 2000,
-            premiumTimeline: 'Annual',
-            standardTimeline: 'Annual',
-            documents: 'Audited financials, tax calculation',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Audit Services',
-        subServices: [
-          SubService(
-            name: 'Financial Audit',
-            premiumCost: 5000,
-            standardCost: 3500,
-            premiumTimeline: '10-15 days',
-            standardTimeline: '15-20 days',
-            documents: 'All financial records, bank statements',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'HR & Talent Acquisition',
-    subtitle: 'Recruitment, HR outsourcing, payroll management',
-    overview:
-        'Complete HR solutions including recruitment, payroll management, HR consulting, and training services.',
-    benefits: const [
-      'Quality recruitment',
-      'Payroll automation',
-      'HR compliance',
-      'Employee training',
-      'HR consulting',
-    ],
-    requirements: const [
-      'Job descriptions',
-      'Company policies',
-      'Employee data',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Recruitment',
-        subServices: [
-          SubService(
-            name: 'Executive Search',
-            premiumCost: 5000,
-            standardCost: 3000,
-            premiumTimeline: '15-30 days',
-            standardTimeline: '30-45 days',
-            documents: 'Job description, company profile',
-          ),
-          SubService(
-            name: 'Staff Recruitment',
-            premiumCost: 2000,
-            standardCost: 1200,
-            premiumTimeline: '10-15 days',
-            standardTimeline: '15-20 days',
-            documents: 'Job description, requirements',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Payroll & HR',
-        subServices: [
-          SubService(
-            name: 'Payroll Management',
-            premiumCost: 1500,
-            standardCost: 800,
-            premiumTimeline: 'Monthly',
-            standardTimeline: 'Monthly',
-            documents: 'Employee data, salary structure',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'Legal & Compliance',
-    subtitle: 'Contracts, IP protection, dispute resolution',
-    overview:
-        'Expert legal services including contract drafting, trademark registration, and legal advisory for businesses.',
-    benefits: const [
-      'Contract expertise',
-      'IP protection',
-      'Legal compliance',
-      'Dispute resolution',
-      'Corporate governance',
-    ],
-    requirements: const [
-      'Business documents',
-      'Legal requirements',
-      'Case details',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Contract Services',
-        subServices: [
-          SubService(
-            name: 'Contract Drafting',
-            premiumCost: 2000,
-            standardCost: 1000,
-            premiumTimeline: '3-5 days',
-            standardTimeline: '5-7 days',
-            documents: 'Requirements, terms, parties info',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'IP Protection',
-        subServices: [
-          SubService(
-            name: 'Trademark Registration',
-            premiumCost: 3000,
-            standardCost: 2000,
-            premiumTimeline: '7-10 days',
-            standardTimeline: '10-15 days',
-            documents: 'Logo, business name, trademark details',
-          ),
-        ],
-      ),
-    ],
-  ),
-  ServiceCategory(
-    name: 'Investor Attraction',
-    subtitle: 'Funding, pitch decks, investor connections',
-    overview:
-        'Attract investors with professional pitch decks, investor matchmaking, and due diligence support services.',
-    benefits: const [
-      'Professional pitch decks',
-      'Investor networking',
-      'Due diligence support',
-      'Funding strategy',
-      'Valuation assistance',
-    ],
-    requirements: const [
-      'Business plan',
-      'Financial projections',
-      'Company information',
-    ],
-    types: const [
-      ServiceType(
-        name: 'Investment Services',
-        subServices: [
-          SubService(
-            name: 'Pitch Deck Creation',
-            premiumCost: 5000,
-            standardCost: 3000,
-            premiumTimeline: '5-7 days',
-            standardTimeline: '7-10 days',
-            documents: 'Business plan, financials, team info',
-          ),
-          SubService(
-            name: 'Investor Matchmaking',
-            premiumCost: 10000,
-            standardCost: 7000,
-            premiumTimeline: '30-60 days',
-            standardTimeline: '60-90 days',
-            documents: 'Pitch deck, business plan, financials',
-          ),
-        ],
-      ),
-      ServiceType(
-        name: 'Due Diligence',
-        subServices: [
-          SubService(
-            name: 'Due Diligence Support',
-            premiumCost: 8000,
-            standardCost: 5000,
-            premiumTimeline: '10-15 days',
-            standardTimeline: '15-20 days',
-            documents: 'All business documents, financials, legal docs',
-          ),
-        ],
-      ),
-    ],
-  ),
-];
+    ),
+  );
+}
 
+Widget _reviewCta(BuildContext context, ServicesProvider provider) {
+  final sub = provider.selectedSubService;
+  if (sub == null) return const SizedBox();
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Ready to get started?',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Request a tailored quote or jump directly into the company setup wizard.',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    showConsultationRequestDialog(
+                      context,
+                      topic: 'Quote request for ${sub.name}',
+                    );
+                  },
+                  child: const Text('Get Quote'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (_) => const CompanySetupScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Start Application'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({super.key});
 
@@ -2297,6 +1661,52 @@ class GrowthScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Consumer<ServicesProvider>(
+                    builder: (context, provider, _) {
+                      if (provider.isLoading) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      if (provider.categories.isEmpty) {
+                        return const SizedBox();
+                      }
+                      final featured = provider.categories.take(3).toList();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Featured Services',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...featured.map(
+                            (category) => Card(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              child: ListTile(
+                                leading: const Icon(Icons.business_center),
+                                title: Text(category.name),
+                                subtitle: Text(category.subtitle),
+                                trailing: ElevatedButton(
+                                  onPressed: onNavigateToServices,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green.shade100,
+                                    foregroundColor: Colors.green.shade900,
+                                  ),
+                                  child: const Text('Explore'),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      );
+                    },
+                  ),
                   // Quick Info Card
                   Container(
                     width: double.infinity,

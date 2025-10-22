@@ -42,7 +42,7 @@ dependencies:
   crypto: ^3.0.3
 
   # File Handling & Documents
-  # file_picker: ^8.0.0+1
+  file_picker: ^8.0.0+1
   image_picker: ^1.0.7
   # image_cropper: ^5.0.1
   path: ^1.8.3
@@ -112,7 +112,8 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/images/
-    - assets/icons/
-    - assets/animations/
+    # NOTE: The following asset directories are temporarily disabled because they don't exist in the repo.
+    # - assets/images/
+    # - assets/icons/
+    # - assets/animations/
     - assets/data/
