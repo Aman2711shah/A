@@ -145,7 +145,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.2),
+                            .withValues(alpha: 0.2),
                       ),
                     ),
                   ),
@@ -201,7 +201,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 24),
@@ -270,7 +270,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -293,7 +293,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -326,7 +326,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 24),
@@ -430,7 +430,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 24),
@@ -538,7 +538,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             'Please review your information before submitting',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
           ),
           const SizedBox(height: 24),
@@ -595,7 +595,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
           // Terms and Conditions
           Card(
             color:
-                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -628,7 +628,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.8),
+                              .withValues(alpha: 0.8),
                         ),
                   ),
                 ],
@@ -654,7 +654,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
           ),

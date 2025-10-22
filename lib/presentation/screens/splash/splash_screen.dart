@@ -23,7 +23,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initialize() async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
+    if (!mounted) return;
+
     final localStorage = LocalStorage();
     final isOnboardingComplete = localStorage.isOnboardingComplete();
     

@@ -129,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                             ),
                         textAlign: TextAlign.center,
                       ),

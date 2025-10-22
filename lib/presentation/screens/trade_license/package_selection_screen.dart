@@ -123,7 +123,7 @@ class _PackageSelectionScreenState extends State<PackageSelectionScreen> {
               color: AppColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -158,8 +158,7 @@ class _PackageSelectionScreenState extends State<PackageSelectionScreen> {
     if (_selectedPackageIndex != null) {
       final selectedPackage = _packages[_selectedPackageIndex!];
       // TODO: Navigate to next screen with selected package
-      print('Selected package: ${selectedPackage.name}');
+      debugPrint('Selected package: ${selectedPackage.name}');
     }
   }
 }
-
