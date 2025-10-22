@@ -27,22 +27,23 @@ class ProgressStepper extends StatelessWidget {
               (index) => _buildStepCircle(index + 1),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Progress Bar
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: currentStep / totalSteps,
               backgroundColor: AppColors.lightGrey,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(AppColors.primary),
               minHeight: 8,
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Step Text
           Text(
             'Step $currentStep of $totalSteps',
@@ -58,7 +59,6 @@ class ProgressStepper extends StatelessWidget {
   Widget _buildStepCircle(int step) {
     final isCompleted = completedSteps.contains(step);
     final isCurrent = step == currentStep;
-    final isPending = step > currentStep && !isCompleted;
 
     Color backgroundColor;
     Color textColor;
@@ -102,4 +102,3 @@ class ProgressStepper extends StatelessWidget {
     );
   }
 }
-

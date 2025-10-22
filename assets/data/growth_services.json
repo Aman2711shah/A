@@ -1,0 +1,338 @@
+[
+  {
+    "Category": "Business Expansion Services"
+  },
+  {
+    "Category": "Branch Setup (Mainland/Freezone/International)",
+    "Premium Charges (AED)": 5000,
+    "Premium Timeline": "2-5 days",
+    "Standard Charges (AED)": 3500,
+    "Standard Timeline": "5-10 days",
+    "Documents Required": "License copy, shareholder ID, MoA"
+  },
+  {
+    "Category": "Additional Activity Addition (DED or Freezone)",
+    "Premium Charges (AED)": 1500,
+    "Premium Timeline": "1-3 days",
+    "Standard Charges (AED)": 800,
+    "Standard Timeline": "3-5 days",
+    "Documents Required": "License, application form"
+  },
+  {
+    "Category": "Office Upgrade & Facility Leasing",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "4 days",
+    "Documents Required": "Current lease, office plan"
+  },
+  {
+    "Category": "Trade Name Change / License Amendment",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "1-2 days",
+    "Standard Charges (AED)": 500,
+    "Standard Timeline": "2-4 days",
+    "Documents Required": "Old license, new name"
+  },
+  {
+    "Category": "Business Restructuring & Strategy Advisory",
+    "Premium Charges (AED)": 3000,
+    "Premium Timeline": "3-5 days",
+    "Standard Charges (AED)": 1800,
+    "Standard Timeline": "7-10 days",
+    "Documents Required": "Business plan, MoA, shareholder IDs"
+  },
+  {
+    "Category": "Banking & Finance"
+  },
+  {
+    "Category": "Corporate Bank Account Opening",
+    "Premium Charges (AED)": 1200,
+    "Premium Timeline": "2-4 days",
+    "Standard Charges (AED)": 800,
+    "Standard Timeline": "4-6 days",
+    "Documents Required": "Shareholder passport, Emirates ID"
+  },
+  {
+    "Category": "Payment Gateway Integration",
+    "Premium Charges (AED)": 800,
+    "Premium Timeline": "1 day",
+    "Standard Charges (AED)": 500,
+    "Standard Timeline": "2-3 days",
+    "Documents Required": "Website & trade license"
+  },
+  {
+    "Category": "POS Machines & Merchant Accounts",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2-3 days",
+    "Standard Charges (AED)": 600,
+    "Standard Timeline": "3-5 days",
+    "Documents Required": "Trade license, ID, account info"
+  },
+  {
+    "Category": "Business Loans & Credit Facilities",
+    "Premium Charges (AED)": 5000,
+    "Premium Timeline": "5-7 days",
+    "Standard Charges (AED)": 3000,
+    "Standard Timeline": "10-15 days",
+    "Documents Required": "Audited financials, license"
+  },
+  {
+    "Category": "Financial Auditing & Statement Preparation",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "3-4 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "6-8 days",
+    "Documents Required": "Bank statements, signed letter"
+  },
+  {
+    "Category": "Marketing & Sales Boost"
+  },
+  {
+    "Category": "Website Development (with e-commerce integration)",
+    "Premium Charges (AED)": 2500,
+    "Premium Timeline": "4-6 days",
+    "Standard Charges (AED)": 1500,
+    "Standard Timeline": "7-10 days",
+    "Documents Required": "Brand content, product info"
+  },
+  {
+    "Category": "SEO & Social Media Marketing (Arabic & English)",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "3-5 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "5-7 days",
+    "Documents Required": "Login access, brand brief"
+  },
+  {
+    "Category": "Business Profile/Brochure Design",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 600,
+    "Standard Timeline": "4 days",
+    "Documents Required": "Business summary, trade license"
+  },
+  {
+    "Category": "Lead Generation Campaigns (LinkedIn/Meta Ads)",
+    "Premium Charges (AED)": 3000,
+    "Premium Timeline": "4-7 days",
+    "Standard Charges (AED)": 1800,
+    "Standard Timeline": "6-10 days",
+    "Documents Required": "Ad budget approval, profile"
+  },
+  {
+    "Category": "Google Business & Trustpilot Setup",
+    "Premium Charges (AED)": 800,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 400,
+    "Standard Timeline": "3 days",
+    "Documents Required": "Trade license, location info"
+  },
+  {
+    "Category": "International Trade & Logistics"
+  },
+  {
+    "Category": "Import/Export Code Registration",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2-3 days",
+    "Standard Charges (AED)": 600,
+    "Standard Timeline": "4-6 days",
+    "Documents Required": "Trade license, ID copies"
+  },
+  {
+    "Category": "Customs Registration & Clearance",
+    "Premium Charges (AED)": 1500,
+    "Premium Timeline": "3 days",
+    "Standard Charges (AED)": 800,
+    "Standard Timeline": "5-7 days",
+    "Documents Required": "Emirates ID, customs code"
+  },
+  {
+    "Category": "Product Registration (Municipality / ESMA)",
+    "Premium Charges (AED)": 2500,
+    "Premium Timeline": "5-7 days",
+    "Standard Charges (AED)": 1800,
+    "Standard Timeline": "7-10 days",
+    "Documents Required": "Product samples, label design"
+  },
+  {
+    "Category": "Warehouse Setup & Logistics Partnerships",
+    "Premium Charges (AED)": 3000,
+    "Premium Timeline": "6-8 days",
+    "Standard Charges (AED)": 2000,
+    "Standard Timeline": "8-12 days",
+    "Documents Required": "Lease agreement, trade license"
+  },
+  {
+    "Category": "E-commerce Platform Listings (Amazon, Noon, Etsy)",
+    "Premium Charges (AED)": 1200,
+    "Premium Timeline": "2-4 days",
+    "Standard Charges (AED)": 800,
+    "Standard Timeline": "4-6 days",
+    "Documents Required": "E-commerce account, product info"
+  },
+  {
+    "Category": "Tax & Compliance"
+  },
+  {
+    "Category": "VAT Registration & Filing (with refund claim assistance)",
+    "Premium Charges (AED)": 1500,
+    "Premium Timeline": "3 days",
+    "Standard Charges (AED)": 1000,
+    "Standard Timeline": "4 days",
+    "Documents Required": "Trade license, financials"
+  },
+  {
+    "Category": "Corporate Tax Planning & Filing",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "3-5 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "5-7 days",
+    "Documents Required": "Audited data, TRN"
+  },
+  {
+    "Category": "ESR/UBO/NOC Compliance",
+    "Premium Charges (AED)": 1800,
+    "Premium Timeline": "3-5 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "5-7 days",
+    "Documents Required": "MoA, license"
+  },
+  {
+    "Category": "Zakat & WHT Advisory (for Saudi expansion)",
+    "Premium Charges (AED)": 2500,
+    "Premium Timeline": "5 days",
+    "Standard Charges (AED)": 1800,
+    "Standard Timeline": "7 days",
+    "Documents Required": "Zakat cert, Saudi trade license"
+  },
+  {
+    "Category": "HR & Talent Management"
+  },
+  {
+    "Category": "Employee Visa Quota Expansion",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 600,
+    "Standard Timeline": "3-4 days",
+    "Documents Required": "Trade license, quota request"
+  },
+  {
+    "Category": "HR Policy Drafting & Recruitment Support",
+    "Premium Charges (AED)": 1500,
+    "Premium Timeline": "3 days",
+    "Standard Charges (AED)": 1000,
+    "Standard Timeline": "4-5 days",
+    "Documents Required": "CVs, JD, license"
+  },
+  {
+    "Category": "Payroll Management Services",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 700,
+    "Standard Timeline": "3-4 days",
+    "Documents Required": "Employee data"
+  },
+  {
+    "Category": "Emirates ID Medical & Insurance Assistance",
+    "Premium Charges (AED)": 800,
+    "Premium Timeline": "1-2 days",
+    "Standard Charges (AED)": 500,
+    "Standard Timeline": "2-3 days",
+    "Documents Required": "Passport, visa"
+  },
+  {
+    "Category": "PRO Retainer Packages",
+    "Premium Charges (AED)": 3000,
+    "Premium Timeline": "3-6 days",
+    "Standard Charges (AED)": 2000,
+    "Standard Timeline": "5-8 days",
+    "Documents Required": "License copy, ID proof"
+  },
+  {
+    "Category": "Legal & Documentation"
+  },
+  {
+    "Category": "MOUs, NDAs, and Agreements Drafting",
+    "Premium Charges (AED)": 1000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 600,
+    "Standard Timeline": "3 days",
+    "Documents Required": "Draft notes, shareholder ID"
+  },
+  {
+    "Category": "Trademark Registration (UAE, GCC, India)",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "3 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "4 days",
+    "Documents Required": "Logo, passport, trade license"
+  },
+  {
+    "Category": "Franchise Agreement & Licensing",
+    "Premium Charges (AED)": 3500,
+    "Premium Timeline": "4-6 days",
+    "Standard Charges (AED)": 2500,
+    "Standard Timeline": "6-8 days",
+    "Documents Required": "License, business model"
+  },
+  {
+    "Category": "Legal Translation & Notarization",
+    "Premium Charges (AED)": 1200,
+    "Premium Timeline": "2-3 days",
+    "Standard Charges (AED)": 700,
+    "Standard Timeline": "3-5 days",
+    "Documents Required": "Legal docs"
+  },
+  {
+    "Category": "Dispute Resolution Services",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "4 days",
+    "Standard Charges (AED)": 1500,
+    "Standard Timeline": "6 days",
+    "Documents Required": "Contract, case info"
+  },
+  {
+    "Category": "Investor Attraction & Certification"
+  },
+  {
+    "Category": "Investor Pitch Decks & Valuation Reports",
+    "Premium Charges (AED)": 1500,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 1000,
+    "Standard Timeline": "3 days",
+    "Documents Required": "Business plan, pitch deck"
+  },
+  {
+    "Category": "Golden Visa Application Support",
+    "Premium Charges (AED)": 3000,
+    "Premium Timeline": "4 days",
+    "Standard Charges (AED)": 1800,
+    "Standard Timeline": "5 days",
+    "Documents Required": "Visa docs, investment proof"
+  },
+  {
+    "Category": "Government/Freezone Incentives",
+    "Premium Charges (AED)": 2000,
+    "Premium Timeline": "2 days",
+    "Standard Charges (AED)": 1200,
+    "Standard Timeline": "3 days",
+    "Documents Required": "Proposal, license copy"
+  },
+  {
+    "Category": "Tender Support & Pre-Qualification (PQ) Documents",
+    "Premium Charges (AED)": 4000,
+    "Premium Timeline": "5-7 days",
+    "Standard Charges (AED)": 3000,
+    "Standard Timeline": "7-10 days",
+    "Documents Required": "Tender invite, license"
+  },
+  {
+    "Category": "ISO Certification Support",
+    "Premium Charges (AED)": 3500,
+    "Premium Timeline": "6 days",
+    "Standard Charges (AED)": 2500,
+    "Standard Timeline": "8 days",
+    "Documents Required": "Company docs"
+  }
+]

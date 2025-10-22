@@ -29,7 +29,7 @@ class StepIndicator extends StatelessWidget {
                       ? Theme.of(context).primaryColor
                       : isActive
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                          : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -42,7 +42,7 @@ class StepIndicator extends StatelessWidget {
                       : Text(
                           '${index + 1}',
                           style: TextStyle(
-                            color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                            color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -59,7 +59,7 @@ class StepIndicator extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: isActive || isCompleted
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                     ),
                     textAlign: TextAlign.center,
@@ -76,7 +76,7 @@ class StepIndicator extends StatelessWidget {
                   width: 20,
                   color: isCompleted
                       ? Theme.of(context).primaryColor
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
             ],
           ),

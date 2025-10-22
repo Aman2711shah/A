@@ -13,10 +13,71 @@ WAZEET is a comprehensive native mobile application built with Flutter that serv
 
 ## ✨ Features
 
-### 🔐 Authentication System
+### � **Bottom Navigation Tabs**
+
+#### 🏠 **Home Tab** (Static UI - Placeholder)
+- Dashboard with stats cards (applications, companies, services)
+- Quick action buttons for common tasks
+- Recent activity feed
+- **Status**: Static placeholder - No backend integration yet
+
+#### 💼 **Services Tab** (✅ Fully Functional)
+- **11 Service Categories** with complete data:
+  - Business Setup (LLC, Free Zone, Branch Office)
+  - Freezone Packages (DMCC, JAFZA, DAFZA, etc.)
+  - Growth Services (Banking, Marketing, Legal, HR, etc.)
+  - Trade License Services
+  - Visa Processing
+  - PRO Services
+  - Document Clearance
+  - Business Consulting
+- **Multi-Step Service Flow**:
+  - Step 1: Select service category
+  - Step 2: Choose service type  
+  - Step 3: Pick specific sub-service
+  - Step 4: Review and submit
+- Progress tracking with visual indicators
+- Detailed service descriptions and pricing
+- **Status**: Live and fully functional
+
+#### 👥 **Community Tab** (Placeholder)
+- Forum discussions (coming soon)
+- Networking events (coming soon)
+- Business community features (coming soon)
+- **Status**: UI only - Functionality pending
+
+#### 📈 **Growth Tab** (✅ Redirect Functional)
+- Smart navigation to Services tab
+- Consolidated 8 growth service categories:
+  - Business Expansion Services
+  - Banking & Finance Solutions
+  - Marketing & Sales Support
+  - International Trade Services
+  - Tax & Compliance Services
+  - HR & Talent Acquisition
+  - Legal & Compliance Services
+  - Investor Attraction Services
+- **Status**: Functional redirect to Services tab
+
+#### ⚙️ **More Tab** (Partially Functional)
+- **Profile Management** (✅ Fully Functional with Firebase):
+  - User registration & login
+  - Profile editing (name, phone, company)
+  - Avatar upload with Firebase Storage
+  - Real-time profile sync with Cloud Firestore
+  - Secure authentication with Firebase Auth
+- Settings (placeholder)
+- Help & Support (placeholder)
+- About (placeholder)
+- Logout (functional)
+- **Status**: Profile management live, other sections pending
+
+### �🔐 Authentication System
 - **User Registration & Login**: Secure authentication with email/password
+- **Firebase Integration**: Cloud-based auth with Firebase Auth
 - **Forgot Password**: Password recovery functionality
 - **Profile Management**: Complete user profile with personal information
+- **Status**: ✅ Live with Firebase backend
 
 ### 🏢 Company Formation
 - **Multi-step Company Setup**: Guided workflow for company formation
@@ -168,6 +229,52 @@ For push notifications and analytics:
 
 ## 🧪 Testing
 
+WAZEET includes comprehensive test coverage following the repository stubbing pattern.
+
+### Test Structure
+```
+test/
+├── features/
+│   ├── profile/edit_profile_screen_test.dart    ✅ Working
+│   ├── home/home_content_screen_test.dart       ⏳ Created
+│   ├── services/services_screen_test.dart       ⏳ Created
+│   ├── community/community_screen_test.dart     ⏳ Created
+│   ├── growth/growth_screen_test.dart           ⏳ Created
+│   └── more/more_screen_test.dart               ⏳ Created
+```
+
+### Running Tests
+
+**Run all tests:**
+```bash
+flutter test
+```
+
+**Run specific test:**
+```bash
+flutter test test/features/profile/edit_profile_screen_test.dart
+```
+
+**Run with coverage:**
+```bash
+flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html
+```
+
+### Test Status
+
+| Feature | Tests | Status | Backend |
+|---------|-------|--------|---------|
+| Profile Management | ✅ | Working | Firebase stubbed |
+| Home Tab | ✅ | Created | None (placeholder) |
+| Services Tab | ✅ | Created | Local data |
+| Community Tab | ✅ | Created | None (placeholder) |
+| Growth Tab | ✅ | Created | Redirect only |
+| More Tab | ✅ | Created | Simplified |
+
+**📝 See [TESTING.md](TESTING.md) for complete testing guide and patterns.**
+
 ### Unit Tests
 ```bash
 flutter test
@@ -255,3 +362,66 @@ For support and questions:
   <p>Made with ❤️ for the UAE business community</p>
   <p>© 2024 WAZEET. All rights reserved.</p>
 </div>
+
+
+## 🧩 Profile Management Module
+
+The profile experience now uses Firebase Authentication, Cloud Firestore, and Firebase Storage to deliver secure, per-user profile data.
+
+### Added Dependencies
+- firebase_auth
+- cloud_firestore
+- firebase_storage
+- image_picker
+- provider
+
+Ensure Firebase is configured for your bundle IDs before running the app.
+
+### Firebase Initialisation
+`main.dart` bootstraps Firebase (skipping web if configuration is absent) and wires `UserRepository` + `ProfileController` through a top-level `MultiProvider`. The `MaterialApp` routes now expose:
+- LoginScreen.routeName (`/auth/login`)
+- EditProfileScreen.routeName (`/profile/edit`)
+
+### Manual QA
+1. Launch the app, log in via the email/password flow (`More` tab will redirect if unauthenticated).
+2. Open the `More` tab → Profile card shows the authenticated user's name and email.
+3. Tap `Edit Profile`, update name/phone, optionally upload an avatar, and save. Snackbar confirms success and the card refreshes.
+4. Tap `Logout`; the tab prompts for login again.
+
+### Tests
+```bash
+flutter test test/features/profile/edit_profile_screen_test.dart
+```
+
+### Firestore Security Rules
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
+```
+
+### Storage Rules
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /profileImages/{uid}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
+```
+
+### Run Commands
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+```

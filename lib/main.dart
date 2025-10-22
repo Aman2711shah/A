@@ -3,23 +3,42 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
+
 import 'app.dart';
+import 'features/profile/data/user_repository.dart';
+import 'features/profile/state/profile_controller.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
   try {
-    // Initialize Firebase only if not on web or if properly configured
     if (!kIsWeb) {
+      // For mobile platforms (iOS, Android, macOS)
       await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized successfully for mobile');
     } else {
-      // For web, we need Firebase configuration
-      // For now, we'll skip Firebase on web
-      print('Running on web - Firebase disabled');
+      // For web platform
+      // Note: After running 'flutterfire configure', import the generated file:
+      // import 'firebase_options.dart';
+      // Then use: await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+      // For now, try to initialize without options (will fail until configured)
+      try {
+        await Firebase.initializeApp();
+        debugPrint('✅ Firebase initialized successfully for web');
+      } catch (e) {
+        debugPrint(
+            '⚠️  Firebase not configured for web yet. Run: flutterfire configure');
+        debugPrint('   Error: $e');
+      }
     }
   } catch (e) {
-    print('Firebase initialization failed: $e');
+    debugPrint('❌ Firebase initialization failed: $e');
+    debugPrint('   Make sure to run: flutterfire configure');
+    debugPrint('   See FIREBASE_SETUP.md for detailed instructions');
   }
 
   // Initialize Hive
@@ -44,5 +63,18 @@ void main() async {
     );
   }
 
-  runApp(const WazeetApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<IUserRepository>(
+          create: (_) => UserRepository(),
+        ),
+        ChangeNotifierProvider<ProfileController>(
+          create: (context) =>
+              ProfileController(context.read<IUserRepository>()),
+        ),
+      ],
+      child: const WazeetApp(),
+    ),
+  );
 }

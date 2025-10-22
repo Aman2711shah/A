@@ -54,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         end: Alignment.bottomRight,
                         colors: [
                           Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColor.withOpacity(0.8),
+                          Theme.of(context).primaryColor.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -220,7 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -236,7 +236,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
           textAlign: TextAlign.center,
         ),
@@ -338,7 +338,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color:
-                      _getStatusColor(application['status']).withOpacity(0.1),
+                      _getStatusColor(application['status']).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

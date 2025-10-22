@@ -138,7 +138,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 24),
@@ -249,7 +249,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
             Icon(
               Icons.work_outline,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -258,7 +258,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 8),
@@ -268,7 +268,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.5),
+                        .withValues(alpha: 0.5),
                   ),
               textAlign: TextAlign.center,
             ),
@@ -303,7 +303,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: _getStatusColor(application['status'])
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -337,7 +337,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                       ),
                 ),
               ],

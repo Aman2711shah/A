@@ -135,7 +135,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -160,7 +160,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
               color: AppColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -193,7 +193,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
   void _handleNext() {
     if (_selectedActivities.isNotEmpty) {
       // TODO: Navigate to next screen with selected activities
-      print('Selected activities: $_selectedActivities');
+      debugPrint('Selected activities: $_selectedActivities');
     }
   }
 }
