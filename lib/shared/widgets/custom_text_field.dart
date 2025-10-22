@@ -20,7 +20,7 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
-  final List<String? Function(String?)>? validators;
+  final List<FormFieldValidator<String>>? validators;
   final List<TextInputFormatter>? inputFormatters;
   final FocusNode? focusNode;
 
@@ -78,7 +78,7 @@ class CustomTextField extends StatelessWidget {
           onChanged: onChanged,
           onFieldSubmitted: onSubmitted,
           validator: validators != null
-              ? FormBuilderValidators.compose(validators)
+              ? FormBuilderValidators.compose(validators!)
               : null,
           inputFormatters: inputFormatters,
           focusNode: focusNode,

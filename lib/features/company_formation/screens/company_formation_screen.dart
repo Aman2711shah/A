@@ -6,7 +6,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../providers/company_provider.dart';
 import '../../../shared/widgets/custom_button.dart';
-import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/step_indicator.dart';
 
@@ -25,7 +24,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
     GlobalKey<FormBuilderState>(),
     GlobalKey<FormBuilderState>(),
   ];
-  
+
   int _currentStep = 0;
   final List<String> _steps = [
     'Company Type',
@@ -70,18 +69,19 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
 
   Future<void> _submitApplication() async {
     final provider = Provider.of<CompanyProvider>(context, listen: false);
-    
+
     try {
       await provider.submitCompanyApplication();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Company formation application submitted successfully!'),
+            content:
+                Text('Company formation application submitted successfully!'),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         context.go('/dashboard');
       }
     } catch (e) {
@@ -120,7 +120,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     steps: _steps,
                   ),
                 ),
-                
+
                 // Form Content
                 Expanded(
                   child: PageView(
@@ -134,7 +134,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     ],
                   ),
                 ),
-                
+
                 // Navigation Buttons
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -142,7 +142,10 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     color: Theme.of(context).colorScheme.surface,
                     border: Border(
                       top: BorderSide(
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.2),
                       ),
                     ),
                   ),
@@ -159,7 +162,9 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                       if (_currentStep > 0) const SizedBox(width: 16),
                       Expanded(
                         child: CustomButton(
-                          text: _currentStep == _steps.length - 1 ? 'Submit' : 'Next',
+                          text: _currentStep == _steps.length - 1
+                              ? 'Submit'
+                              : 'Next',
                           onPressed: _nextStep,
                           isLoading: provider.isLoading,
                         ),
@@ -186,18 +191,21 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             Text(
               'Choose Company Type',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Select the type of company you want to establish in the UAE',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
-            
+
             // Company Type Options
             FormBuilderRadioGroup<String>(
               name: 'companyType',
@@ -243,7 +251,7 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                   ),
                 ),
               ],
-              validators: [FormBuilderValidators.required()],
+              validator: FormBuilderValidators.required(),
             ),
           ],
         ),
@@ -251,7 +259,8 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
     );
   }
 
-  Widget _buildCompanyTypeCard(String title, String subtitle, IconData icon, Color color) {
+  Widget _buildCompanyTypeCard(
+      String title, String subtitle, IconData icon, Color color) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -274,15 +283,18 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.7),
+                        ),
                   ),
                 ],
               ),
@@ -304,43 +316,49 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             Text(
               'Company Details',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Provide the basic information about your company',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
-            
-            CustomTextField(
+            FormBuilderTextField(
               name: 'companyName',
-              label: 'Company Name',
-              hintText: 'Enter company name',
-              prefixIcon: Icons.business,
-              validators: [
+              decoration: const InputDecoration(
+                labelText: 'Company Name',
+                hintText: 'Enter company name',
+                prefixIcon: Icon(Icons.business),
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              validator: FormBuilderValidators.compose([
                 FormBuilderValidators.required(),
                 FormBuilderValidators.minLength(3),
-              ],
+              ]),
             ),
-            
             const SizedBox(height: 16),
-            
-            CustomTextField(
+            FormBuilderTextField(
               name: 'tradeName',
-              label: 'Trade Name',
-              hintText: 'Enter trade name',
-              prefixIcon: Icons.store,
-              validators: [
-                FormBuilderValidators.required(),
-              ],
+              decoration: const InputDecoration(
+                labelText: 'Trade Name',
+                hintText: 'Enter trade name',
+                prefixIcon: Icon(Icons.store),
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              validator: FormBuilderValidators.required(),
             ),
-            
             const SizedBox(height: 16),
-            
             FormBuilderDropdown<String>(
               name: 'businessActivity',
               decoration: const InputDecoration(
@@ -351,30 +369,39 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                 fillColor: Colors.white,
               ),
               items: const [
-                DropdownMenuItem(value: 'trading', child: Text('General Trading')),
-                DropdownMenuItem(value: 'consulting', child: Text('Consulting Services')),
-                DropdownMenuItem(value: 'technology', child: Text('Technology Services')),
-                DropdownMenuItem(value: 'construction', child: Text('Construction')),
-                DropdownMenuItem(value: 'healthcare', child: Text('Healthcare')),
+                DropdownMenuItem(
+                    value: 'trading', child: Text('General Trading')),
+                DropdownMenuItem(
+                    value: 'consulting', child: Text('Consulting Services')),
+                DropdownMenuItem(
+                    value: 'technology', child: Text('Technology Services')),
+                DropdownMenuItem(
+                    value: 'construction', child: Text('Construction')),
+                DropdownMenuItem(
+                    value: 'healthcare', child: Text('Healthcare')),
                 DropdownMenuItem(value: 'education', child: Text('Education')),
-                DropdownMenuItem(value: 'hospitality', child: Text('Hospitality')),
+                DropdownMenuItem(
+                    value: 'hospitality', child: Text('Hospitality')),
                 DropdownMenuItem(value: 'other', child: Text('Other')),
               ],
-              validators: [FormBuilderValidators.required()],
+              validator: FormBuilderValidators.required(),
             ),
-            
             const SizedBox(height: 16),
-            
-            CustomTextField(
+            FormBuilderTextField(
               name: 'capital',
-              label: 'Authorized Capital (AED)',
-              hintText: 'Enter capital amount',
               keyboardType: TextInputType.number,
-              prefixIcon: Icons.attach_money,
-              validators: [
+              decoration: const InputDecoration(
+                labelText: 'Authorized Capital (AED)',
+                hintText: 'Enter capital amount',
+                prefixIcon: Icon(Icons.attach_money),
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              validator: FormBuilderValidators.compose([
                 FormBuilderValidators.required(),
                 FormBuilderValidators.numeric(),
-              ],
+              ]),
             ),
           ],
         ),
@@ -393,18 +420,21 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             Text(
               'Shareholders Information',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Add shareholders and their ownership percentages',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
-            
+
             // Shareholder 1
             Card(
               child: Padding(
@@ -415,58 +445,71 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     Text(
                       'Shareholder 1',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 16),
-                    
-                    CustomTextField(
+                    FormBuilderTextField(
                       name: 'shareholder1Name',
-                      label: 'Full Name',
-                      hintText: 'Enter full name',
-                      prefixIcon: Icons.person,
-                      validators: [FormBuilderValidators.required()],
+                      decoration: const InputDecoration(
+                        labelText: 'Full Name',
+                        hintText: 'Enter full name',
+                        prefixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.required(),
                     ),
-                    
                     const SizedBox(height: 16),
-                    
-                    CustomTextField(
+                    FormBuilderTextField(
                       name: 'shareholder1Email',
-                      label: 'Email',
-                      hintText: 'Enter email address',
                       keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icons.email,
-                      validators: [
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Enter email address',
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(),
                         FormBuilderValidators.email(),
-                      ],
+                      ]),
                     ),
-                    
                     const SizedBox(height: 16),
-                    
-                    CustomTextField(
+                    FormBuilderTextField(
                       name: 'shareholder1Phone',
-                      label: 'Phone Number',
-                      hintText: '+971 50 123 4567',
                       keyboardType: TextInputType.phone,
-                      prefixIcon: Icons.phone,
-                      validators: [FormBuilderValidators.required()],
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        hintText: '+971 50 123 4567',
+                        prefixIcon: Icon(Icons.phone),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.required(),
                     ),
-                    
                     const SizedBox(height: 16),
-                    
-                    CustomTextField(
+                    FormBuilderTextField(
                       name: 'shareholder1Percentage',
-                      label: 'Ownership Percentage (%)',
-                      hintText: 'Enter percentage',
                       keyboardType: TextInputType.number,
-                      prefixIcon: Icons.percent,
-                      validators: [
+                      decoration: const InputDecoration(
+                        labelText: 'Ownership Percentage (%)',
+                        hintText: 'Enter percentage',
+                        prefixIcon: Icon(Icons.percent),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(),
                         FormBuilderValidators.numeric(),
                         FormBuilderValidators.min(1),
                         FormBuilderValidators.max(100),
-                      ],
+                      ]),
                     ),
                   ],
                 ),
@@ -487,18 +530,19 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
           Text(
             'Review & Submit',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             'Please review your information before submitting',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-            ),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
           ),
           const SizedBox(height: 24),
-          
+
           // Review Cards
           Card(
             child: Padding(
@@ -509,11 +553,12 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                   Text(
                     'Company Information',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 12),
-                  _buildReviewItem('Company Type', 'Limited Liability Company (LLC)'),
+                  _buildReviewItem(
+                      'Company Type', 'Limited Liability Company (LLC)'),
                   _buildReviewItem('Company Name', 'ABC Trading LLC'),
                   _buildReviewItem('Trade Name', 'ABC Trading'),
                   _buildReviewItem('Business Activity', 'General Trading'),
@@ -522,9 +567,9 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -534,8 +579,8 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                   Text(
                     'Shareholders',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 12),
                   _buildReviewItem('Shareholder 1', 'John Doe (60%)'),
@@ -544,12 +589,13 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Terms and Conditions
           Card(
-            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+            color:
+                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -566,9 +612,9 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                       Text(
                         'Important Information',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
                       ),
                     ],
                   ),
@@ -579,8 +625,11 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
                     '• Payment will be processed upon approval\n'
                     '• You will receive updates via email and SMS',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.8),
+                        ),
                   ),
                 ],
               ),
@@ -602,16 +651,19 @@ class _CompanyFormationScreenState extends State<CompanyFormationScreen> {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
         ],

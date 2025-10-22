@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../features/auth/providers/auth_provider.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,12 +20,12 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _animationController,
       curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
     ));
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.5,
       end: 1.0,
@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _animationController,
       curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
     ));
-    
+
     _animationController.forward();
     _navigateToNextScreen();
   }
@@ -54,10 +54,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (mounted) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       if (authProvider.isAuthenticated) {
         context.go('/dashboard');
       } else {
@@ -102,42 +102,43 @@ class _SplashScreenState extends State<SplashScreen>
                         size: 60,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // App Name
                     Text(
                       'WAZEET',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Tagline
                     Text(
                       'Your Business Setup Partner',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                      ),
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     Text(
                       'in the UAE',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                      ),
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
-                    
+
                     const SizedBox(height: 60),
-                    
+
                     // Loading Indicator
                     SizedBox(
                       width: 40,
