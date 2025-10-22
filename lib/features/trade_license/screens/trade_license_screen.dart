@@ -27,7 +27,8 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<TradeLicenseProvider>(context, listen: false).loadApplications();
+      Provider.of<TradeLicenseProvider>(context, listen: false)
+          .loadApplications();
     });
   }
 
@@ -42,8 +43,9 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
 
   Future<void> _submitApplication() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final provider = Provider.of<TradeLicenseProvider>(context, listen: false);
-      
+      final provider =
+          Provider.of<TradeLicenseProvider>(context, listen: false);
+
       try {
         await provider.submitTradeLicenseApplication({
           'companyName': _companyNameController.text.trim(),
@@ -51,15 +53,16 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
           'licenseType': _licenseTypeController.text.trim(),
           'businessActivity': _businessActivityController.text.trim(),
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Trade license application submitted successfully!'),
+              content:
+                  Text('Trade license application submitted successfully!'),
               backgroundColor: Colors.green,
             ),
           );
-          
+
           context.go('/dashboard');
         }
       } catch (e) {
@@ -127,18 +130,20 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
             Text(
               'Trade License Application',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Apply for a trade license to conduct business activities in the UAE',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
-            
             CustomTextField(
               controller: _companyNameController,
               label: 'Company Name',
@@ -149,9 +154,7 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                 FormBuilderValidators.minLength(3),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _tradeNameController,
               label: 'Trade Name',
@@ -161,9 +164,7 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                 FormBuilderValidators.required(),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             FormBuilderDropdown<String>(
               name: 'licenseType',
               decoration: const InputDecoration(
@@ -174,17 +175,20 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                 fillColor: Colors.white,
               ),
               items: const [
-                DropdownMenuItem(value: 'commercial', child: Text('Commercial License')),
-                DropdownMenuItem(value: 'professional', child: Text('Professional License')),
-                DropdownMenuItem(value: 'industrial', child: Text('Industrial License')),
-                DropdownMenuItem(value: 'tourism', child: Text('Tourism License')),
-                DropdownMenuItem(value: 'agricultural', child: Text('Agricultural License')),
+                DropdownMenuItem(
+                    value: 'commercial', child: Text('Commercial License')),
+                DropdownMenuItem(
+                    value: 'professional', child: Text('Professional License')),
+                DropdownMenuItem(
+                    value: 'industrial', child: Text('Industrial License')),
+                DropdownMenuItem(
+                    value: 'tourism', child: Text('Tourism License')),
+                DropdownMenuItem(
+                    value: 'agricultural', child: Text('Agricultural License')),
               ],
-              validators: [FormBuilderValidators.required()],
+              validator: FormBuilderValidators.required(),
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _businessActivityController,
               label: 'Business Activity',
@@ -196,13 +200,13 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                 FormBuilderValidators.minLength(10),
               ],
             ),
-            
             const SizedBox(height: 24),
-            
             CustomButton(
               text: 'Submit Application',
               onPressed: _submitApplication,
-              isLoading: Provider.of<TradeLicenseProvider>(context, listen: false).isLoading,
+              isLoading:
+                  Provider.of<TradeLicenseProvider>(context, listen: false)
+                      .isLoading,
             ),
           ],
         ),
@@ -225,15 +229,21 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
             Text(
               'No Applications Yet',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Submit your first trade license application to get started',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.5),
+                  ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -259,13 +269,15 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                     Text(
                       application['companyName'] ?? 'N/A',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(application['status']).withOpacity(0.1),
+                        color: _getStatusColor(application['status'])
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -292,8 +304,11 @@ class _TradeLicenseScreenState extends State<TradeLicenseScreen> {
                 Text(
                   'Submitted: ${_formatDate(application['submittedAt'])}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                  ),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
                 ),
               ],
             ),

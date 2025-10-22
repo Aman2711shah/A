@@ -43,7 +43,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
   Future<void> _submitApplication() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final provider = Provider.of<VisaProvider>(context, listen: false);
-      
+
       try {
         await provider.submitVisaApplication({
           'employeeName': _employeeNameController.text.trim(),
@@ -52,7 +52,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
           'salary': _salaryController.text.trim(),
           'visaType': 'Employment Visa',
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -60,7 +60,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           context.go('/dashboard');
         }
       } catch (e) {
@@ -128,18 +128,20 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
             Text(
               'Visa Application',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Apply for employee visas to bring your team to the UAE',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
-            
             FormBuilderDropdown<String>(
               name: 'visaType',
               decoration: const InputDecoration(
@@ -150,16 +152,17 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 fillColor: Colors.white,
               ),
               items: const [
-                DropdownMenuItem(value: 'employment', child: Text('Employment Visa')),
-                DropdownMenuItem(value: 'investor', child: Text('Investor Visa')),
-                DropdownMenuItem(value: 'dependent', child: Text('Dependent Visa')),
+                DropdownMenuItem(
+                    value: 'employment', child: Text('Employment Visa')),
+                DropdownMenuItem(
+                    value: 'investor', child: Text('Investor Visa')),
+                DropdownMenuItem(
+                    value: 'dependent', child: Text('Dependent Visa')),
                 DropdownMenuItem(value: 'visit', child: Text('Visit Visa')),
               ],
-              validators: [FormBuilderValidators.required()],
+              validator: FormBuilderValidators.required(),
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _employeeNameController,
               label: 'Employee Name',
@@ -170,9 +173,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 FormBuilderValidators.minLength(3),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _passportNumberController,
               label: 'Passport Number',
@@ -183,9 +184,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 FormBuilderValidators.minLength(6),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _positionController,
               label: 'Position/Job Title',
@@ -195,9 +194,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 FormBuilderValidators.required(),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             CustomTextField(
               controller: _salaryController,
               label: 'Monthly Salary (AED)',
@@ -209,9 +206,7 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 FormBuilderValidators.numeric(),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
             FormBuilderDropdown<String>(
               name: 'nationality',
               decoration: const InputDecoration(
@@ -224,20 +219,20 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
               items: const [
                 DropdownMenuItem(value: 'indian', child: Text('Indian')),
                 DropdownMenuItem(value: 'pakistani', child: Text('Pakistani')),
-                DropdownMenuItem(value: 'bangladeshi', child: Text('Bangladeshi')),
+                DropdownMenuItem(
+                    value: 'bangladeshi', child: Text('Bangladeshi')),
                 DropdownMenuItem(value: 'filipino', child: Text('Filipino')),
                 DropdownMenuItem(value: 'egyptian', child: Text('Egyptian')),
                 DropdownMenuItem(value: 'other', child: Text('Other')),
               ],
-              validators: [FormBuilderValidators.required()],
+              validator: FormBuilderValidators.required(),
             ),
-            
             const SizedBox(height: 24),
-            
             CustomButton(
               text: 'Submit Application',
               onPressed: _submitApplication,
-              isLoading: Provider.of<VisaProvider>(context, listen: false).isLoading,
+              isLoading:
+                  Provider.of<VisaProvider>(context, listen: false).isLoading,
             ),
           ],
         ),
@@ -260,15 +255,21 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
             Text(
               'No Visa Applications Yet',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Submit your first visa application to get started',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.5),
+                  ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -294,13 +295,15 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                     Text(
                       application['employeeName'] ?? 'N/A',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(application['status']).withOpacity(0.1),
+                        color: _getStatusColor(application['status'])
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -331,8 +334,11 @@ class _VisaProcessingScreenState extends State<VisaProcessingScreen> {
                 Text(
                   'Submitted: ${_formatDate(application['submittedAt'])}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                  ),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      ),
                 ),
               ],
             ),
