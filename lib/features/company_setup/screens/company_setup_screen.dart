@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import '../../../core/services/firebase_firestore_service.dart';
 import '../providers/company_setup_provider.dart';
 import '../widgets/business_activity_step.dart';
 import '../widgets/legal_structure_step.dart';
@@ -19,18 +17,20 @@ class CompanySetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => CompanySetupProvider(
-        firebaseAuth: FirebaseAuth.instance,
-        firestoreService: FirestoreService(),
-      ),
+      create: (_) => CompanySetupProvider(),
       child: const CompanySetupView(),
     );
   }
 }
 
-class CompanySetupView extends StatelessWidget {
+class CompanySetupView extends StatefulWidget {
   const CompanySetupView({super.key});
 
+  @override
+  State<CompanySetupView> createState() => _CompanySetupViewState();
+}
+
+class _CompanySetupViewState extends State<CompanySetupView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
