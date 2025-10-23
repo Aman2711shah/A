@@ -277,7 +277,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [statusColor, statusColor.withOpacity(0.7)],
+          colors: [statusColor, statusColor.withValues(alpha: 0.7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -299,7 +299,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -326,7 +326,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progressPercentage / 100,
-                    backgroundColor: Colors.white.withOpacity(0.3),
+                    backgroundColor: Colors.white.withValues(alpha: 0.3),
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Colors.white),
                     minHeight: 8,
@@ -371,7 +371,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   backgroundImage: photo != null ? NetworkImage(photo) : null,
                   child: photo == null
                       ? Text(
@@ -479,7 +479,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -519,7 +519,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -746,13 +746,16 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
     if (lower.contains('passport')) return Icons.credit_card;
     if (lower.contains('photo')) return Icons.photo;
     if (lower.contains('noc')) return Icons.work;
-    if (lower.contains('certificate') || lower.contains('degree'))
+    if (lower.contains('certificate') || lower.contains('degree')) {
       return Icons.school;
-    if (lower.contains('bank') || lower.contains('statement'))
+    }
+    if (lower.contains('bank') || lower.contains('statement')) {
       return Icons.account_balance;
+    }
     if (lower.contains('address') || lower.contains('proof')) return Icons.home;
-    if (lower.contains('business') || lower.contains('plan'))
+    if (lower.contains('business') || lower.contains('plan')) {
       return Icons.business;
+    }
     return Icons.description;
   }
 
