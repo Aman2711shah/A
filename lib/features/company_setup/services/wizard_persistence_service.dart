@@ -26,7 +26,8 @@ class WizardPersistenceService {
 
       await prefs.setString(key, json.encode(data));
     } catch (e) {
-      print('Error saving wizard progress: $e');
+      // Silently fail - progress save is not critical
+      rethrow;
     }
   }
 
@@ -40,11 +41,11 @@ class WizardPersistenceService {
       if (dataString == null) return null;
 
       final data = json.decode(dataString) as Map<String, dynamic>;
-      
+
       // Check if progress is too old (older than 30 days)
       final timestamp = DateTime.parse(data[_timestampKey] as String);
       final age = DateTime.now().difference(timestamp).inDays;
-      
+
       if (age > 30) {
         // Clear old progress
         await clearProgress(userId);
@@ -53,7 +54,7 @@ class WizardPersistenceService {
 
       return data;
     } catch (e) {
-      print('Error loading wizard progress: $e');
+      // Return null on error - progress load is not critical
       return null;
     }
   }
@@ -65,7 +66,7 @@ class WizardPersistenceService {
       final key = _keyPrefix + userId;
       await prefs.remove(key);
     } catch (e) {
-      print('Error clearing wizard progress: $e');
+      // Silently fail - progress clear is not critical
     }
   }
 
