@@ -1,4 +1,4 @@
-package com.wazeet.ai
+package com.example.android
 
 import io.flutter.embedding.android.FlutterActivity
 
