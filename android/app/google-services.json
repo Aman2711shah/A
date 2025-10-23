@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "610092962291",
+    "project_id": "aaaa-8ed0c",
+    "storage_bucket": "aaaa-8ed0c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610092962291:android:d29e933a892f4b72080286",
+        "android_client_info": {
+          "package_name": "com.wazeet.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFsXhPEEpDvo1T9iguBVG7aCVRNCWLfgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
