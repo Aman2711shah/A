@@ -1,7 +1,7 @@
 // Freezone Filtering Demo
 // This demonstrates how the freezone filtering works with actual data
-import 'package:flutter/foundation.dart';
 
+import 'package:flutter/foundation.dart';
 import '../core/utils/freezone_utils.dart';
 
 void demoFreezoneFiltering() async {
@@ -69,8 +69,8 @@ void _displayTop3Results(List<Map<String, dynamic>> results) {
     final zone = top3[i];
     final freezone = zone['Freezone'] ?? 'Unknown';
     final package = zone['Package Name'] ?? 'Standard';
-   final price = zone['Price (AED)'] ?? 0;
-   final visas = zone['No. of Visas Included'] ?? 0;
+    final price = zone['Price (AED)'] ?? 0;
+    final visas = zone['No. of Visas Included'] ?? 0;
 
     debugPrint('  ${i + 1}. $freezone - $package');
     debugPrint('     💰 AED $price | 🎫 $visas visas included');
@@ -90,7 +90,8 @@ void explainFilteringLogic() {
       '   - Maps user selection to keywords (e.g., "technology" → ["tech", "digital", "innovation"])');
   debugPrint(
       '   - Searches freezone package names and descriptions for these keywords');
-  debugPrint('   - Examples: RAK DAO matches "technology", SHAMS matches "media"\n');
+  debugPrint(
+      '   - Examples: RAK DAO matches "technology", SHAMS matches "media"\n');
 
   debugPrint('2. Legal Structure Matching:');
   debugPrint(
@@ -118,7 +119,8 @@ void explainFilteringLogic() {
 void integrateWithCompanySetup() {
   debugPrint('🔧 Integration with Company Setup Flow:\n');
 
-  debugPrint('Step 1: User completes form steps (Activity, Legal, Visas, Office)');
+  debugPrint(
+      'Step 1: User completes form steps (Activity, Legal, Visas, Office)');
   debugPrint('Step 2: Data stored in Map<String, dynamic> _formData');
   debugPrint('Step 3: FreezoneRecommendationsStepWidget loads recommendations');
   debugPrint('Step 4: filterFreezones() processes requirements');

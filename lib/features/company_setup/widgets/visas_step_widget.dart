@@ -227,7 +227,9 @@ class VisasStepWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.white,
         borderRadius: BorderRadius.circular(12),
         elevation: isSelected ? 2 : 1,
         child: InkWell(
