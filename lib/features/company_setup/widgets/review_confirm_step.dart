@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/company_setup_provider.dart';
+import 'package:wazeet_app/features/company_setup/providers/company_setup_provider.dart';
 import '../../../config/theme/app_colors.dart';
 
 class ReviewConfirmStep extends StatelessWidget {

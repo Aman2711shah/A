@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/company_setup_provider.dart';
+import 'package:wazeet_app/features/company_setup/providers/company_setup_provider.dart';
 import '../../../config/theme/app_colors.dart';
 
 class LegalStructureStep extends StatelessWidget {
@@ -131,7 +131,9 @@ class LegalStructureStep extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.white,
         borderRadius: BorderRadius.circular(12),
         elevation: isSelected ? 2 : 1,
         child: InkWell(
