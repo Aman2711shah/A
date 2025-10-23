@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/company_setup_provider.dart';
+import 'package:wazeet_app/features/company_setup/providers/company_setup_provider.dart';
 import '../../../config/theme/app_colors.dart';
 
 class BusinessActivityStep extends StatelessWidget {
@@ -169,7 +169,7 @@ class BusinessActivityStep extends StatelessWidget {
                     ),
                     maxLines: 3,
                     onChanged: (value) {
-                      // TODO: Add custom activity field to provider
+                      provider.setCustomActivity(value);
                     },
                   ),
                 ),
@@ -190,7 +190,9 @@ class BusinessActivityStep extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.white,
         borderRadius: BorderRadius.circular(12),
         elevation: isSelected ? 2 : 1,
         child: InkWell(
