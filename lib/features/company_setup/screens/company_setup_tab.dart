@@ -266,6 +266,7 @@ class _CompanySetupTabState extends State<CompanySetupTab> {
     // Simulate API call (in real app, send setupState.toJson())
     await Future.delayed(const Duration(seconds: 2));
 
+    // Ensure the widget is still mounted before using context after an async gap
     if (!mounted) return;
 
     Navigator.of(context).pop(); // Close loading dialog
