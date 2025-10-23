@@ -21,6 +21,11 @@ class ServicesProvider extends ChangeNotifier {
   ServiceType? _selectedType;
   SubService? _selectedSubService;
 
+  // Quote request + uploads
+  bool _isSubmittingQuote = false;
+  String? _submitError;
+  final Map<String, String> _uploadedDocuments = {};
+
   List<ServiceCategory> get categories => _categories;
   bool get isLoading => _loading;
   String? get error => _error;
@@ -29,6 +34,13 @@ class ServicesProvider extends ChangeNotifier {
   ServiceCategory? get selectedCategory => _selectedCategory;
   ServiceType? get selectedType => _selectedType;
   SubService? get selectedSubService => _selectedSubService;
+
+  // Quote request state
+  bool get isSubmittingQuote => _isSubmittingQuote;
+  String? get submitError => _submitError;
+
+  Map<String, String> get uploadedDocuments =>
+      Map.unmodifiable(_uploadedDocuments);
 
   bool get canProceed {
     switch (_step) {
@@ -88,6 +100,51 @@ class ServicesProvider extends ChangeNotifier {
     _selectedType = null;
     _selectedSubService = null;
     notifyListeners();
+  }
+
+  // Document uploads management (UI will perform actual upload and pass URLs)
+  void addUploadedDocument(String key, String url) {
+    _uploadedDocuments[key] = url;
+    notifyListeners();
+  }
+
+  void removeUploadedDocument(String key) {
+    _uploadedDocuments.remove(key);
+    notifyListeners();
+  }
+
+  void clearUploadedDocuments() {
+    _uploadedDocuments.clear();
+    notifyListeners();
+  }
+
+  Future<void> submitQuoteRequest(Map<String, dynamic> customerData) async {
+    if (_selectedCategory == null ||
+        _selectedType == null ||
+        _selectedSubService == null) {
+      _submitError = 'Please complete the selection before submitting.';
+      notifyListeners();
+      return;
+    }
+    _isSubmittingQuote = true;
+    _submitError = null;
+    notifyListeners();
+    try {
+      await _repository.submitQuoteRequest(
+        category: _selectedCategory!,
+        type: _selectedType!,
+        subService: _selectedSubService!,
+        customerData: customerData,
+        documentUrls: _uploadedDocuments,
+      );
+      // Optional: clear after successful submit
+      clearUploadedDocuments();
+    } catch (e) {
+      _submitError = e.toString();
+    } finally {
+      _isSubmittingQuote = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _loadCatalog({bool force = false}) async {

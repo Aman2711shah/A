@@ -13,6 +13,7 @@ import '../../../features/community/widgets/community_post_card.dart';
 import '../../../features/community/widgets/community_post_composer.dart';
 import '../../../features/services/models/service_catalog.dart';
 import '../../../features/services/providers/services_provider.dart';
+import '../../../features/services/widgets/quote_request_form.dart';
 import '../../../shared/dialogs/consultation_request_dialog.dart';
 import '../../../features/profile/ui/more_screen_extension.dart'; // INSERT: profile management
 
@@ -580,9 +581,7 @@ class _ServicesProgress extends StatelessWidget {
                 titles[index],
                 style: TextStyle(
                   fontSize: 12,
-                  color: active
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
+                  color: active ? AppColors.primary : AppColors.textSecondary,
                   fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
@@ -619,8 +618,7 @@ class _CategoryList extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color:
-                    isSelected ? AppColors.primary : Colors.grey.shade200,
+                color: isSelected ? AppColors.primary : Colors.grey.shade200,
               ),
             ),
             child: ListTile(
@@ -669,8 +667,7 @@ class _TypeList extends StatelessWidget {
                   ),
                   Text(
                     category.subtitle,
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -736,8 +733,7 @@ class _SubServiceList extends StatelessWidget {
                   ),
                   Text(
                     category.name,
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -803,8 +799,7 @@ class _ReviewSection extends StatelessWidget {
                   ),
                   Text(
                     '${type.name} • ${category.name}',
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -816,7 +811,11 @@ class _ReviewSection extends StatelessWidget {
         const SizedBox(height: 12),
         _recommendedCard(),
         const SizedBox(height: 12),
-        _reviewCta(context, provider),
+        _documentsRequiredCard(sub),
+        const SizedBox(height: 12),
+        const QuoteRequestForm(),
+        const SizedBox(height: 12),
+        _startApplicationCta(context),
       ],
     );
   }
@@ -964,8 +963,7 @@ Widget _estimateCard(SubService sub) {
                       ),
                     ),
                     Text(sub.premiumTimeline,
-                        style:
-                            const TextStyle(color: AppColors.textSecondary)),
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -982,8 +980,7 @@ Widget _estimateCard(SubService sub) {
                       ),
                     ),
                     Text(sub.standardTimeline,
-                        style:
-                            const TextStyle(color: AppColors.textSecondary)),
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -1023,6 +1020,63 @@ Widget _recommendedCard() {
             title: Text('Bank account introductions'),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+Widget _documentsRequiredCard(SubService sub) {
+  final docs = sub.documents
+      .split(',')
+      .map((e) => e.trim())
+      .where((e) => e.isNotEmpty)
+      .toList();
+  if (docs.isEmpty) return const SizedBox.shrink();
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Documents Required',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ...docs.map(
+            (d) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.description_outlined),
+              title: Text(d),
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _startApplicationCta(BuildContext context) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (_) => const CompanySetupScreen(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+          ),
+          child: const Text('Start Application'),
+        ),
       ),
     ),
   );
@@ -1083,6 +1137,7 @@ Widget _reviewCta(BuildContext context, ServicesProvider provider) {
     ),
   );
 }
+
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({super.key});
 
@@ -1119,8 +1174,7 @@ class _CommunityViewState extends State<_CommunityView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () =>
-                _showComingSoonDialog(context, 'Community search'),
+            onPressed: () => _showComingSoonDialog(context, 'Community search'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -1154,8 +1208,7 @@ class _CommunityViewState extends State<_CommunityView> {
                           } catch (e) {
                             messenger.showSnackBar(
                               SnackBar(
-                                content:
-                                    Text('Unable to post right now: $e'),
+                                content: Text('Unable to post right now: $e'),
                               ),
                             );
                           } finally {
@@ -1185,8 +1238,8 @@ class _CommunityViewState extends State<_CommunityView> {
                         itemCount: provider.posts.length,
                         itemBuilder: (context, index) {
                           final post = provider.posts[index];
-                          final isLiked = user != null &&
-                              post.likes.contains(user.uid);
+                          final isLiked =
+                              user != null && post.likes.contains(user.uid);
                           final messenger = ScaffoldMessenger.of(context);
                           return CommunityPostCard(
                             post: post,
@@ -1584,6 +1637,7 @@ class __CommunityCommentsSheetState extends State<_CommunityCommentsSheet> {
     );
   }
 }
+
 class GrowthScreen extends StatelessWidget {
   final VoidCallback onNavigateToServices;
 
