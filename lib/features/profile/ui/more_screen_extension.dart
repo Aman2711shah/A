@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../auth/ui/login_screen.dart';
+import '../../../config/theme/app_colors.dart';
 import '../data/user_profile.dart';
 import '../state/profile_controller.dart';
 import 'edit_profile_screen.dart';
@@ -35,10 +34,14 @@ class _MoreScreenContentState extends State<MoreScreenContent> {
             children: [
               ProfileCard(
                 profile: profile,
-                onEditProfile: () => _navigateTo(context, const EditProfileScreen(), EditProfileScreen.routeName),
-                onMyApplications: () => _navigateTo(context, const StubScreen(title: 'My Applications')),
-                onSettings: () => _navigateTo(context, const StubScreen(title: 'Settings')),
-                onHelpSupport: () => _navigateTo(context, const StubScreen(title: 'Help & Support')),
+                onEditProfile: () =>
+                    _navigateTo(context, const EditProfileScreen()),
+                onMyApplications: () => _navigateTo(
+                    context, const StubScreen(title: 'My Applications')),
+                onSettings: () =>
+                    _navigateTo(context, const StubScreen(title: 'Settings')),
+                onHelpSupport: () => _navigateTo(
+                    context, const StubScreen(title: 'Help & Support')),
                 onLogout: () async {
                   await controller.signOut();
                   if (!context.mounted) return;
@@ -56,11 +59,6 @@ class _MoreScreenContentState extends State<MoreScreenContent> {
   }
 
   void _navigateTo(BuildContext context, Widget page, [String? routeName]) {
-    if (routeName != null) {
-      Navigator.of(context).pushNamed(routeName);
-      return;
-    }
-
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => page),
     );
@@ -78,7 +76,8 @@ class _MoreScreenContentState extends State<MoreScreenContent> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -135,9 +134,8 @@ class _MoreScreenContentState extends State<MoreScreenContent> {
     _navigatingToLogin = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      Navigator.of(context)
-          .pushNamed(LoginScreen.routeName)
-          .whenComplete(() => _navigatingToLogin = false);
+      Navigator.of(context).pushNamed('/auth/login');
+      _navigatingToLogin = false;
     });
   }
 }
