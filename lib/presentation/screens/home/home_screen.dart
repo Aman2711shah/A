@@ -18,6 +18,8 @@ import '../../../features/trade_license/providers/trade_license_provider.dart';
 import '../../../features/visa_processing/providers/visa_provider.dart';
 import '../../../shared/dialogs/consultation_request_dialog.dart';
 import '../../../features/profile/ui/more_screen_extension.dart'; // INSERT: profile management
+import '../../../features/profile/state/profile_controller.dart';
+import '../../../features/profile/data/user_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
         ChangeNotifierProvider(create: (_) => TradeLicenseProvider()),
         ChangeNotifierProvider(create: (_) => VisaProvider()),
+        ChangeNotifierProvider(
+            create: (_) => ProfileController(UserRepository())),
       ],
       child: Scaffold(
         body: IndexedStack(
