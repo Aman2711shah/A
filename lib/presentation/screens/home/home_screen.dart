@@ -14,6 +14,8 @@ import '../../../features/community/widgets/community_post_composer.dart';
 import '../../../features/growth/screens/growth_services_flow_screen.dart';
 import '../../../features/services/models/service_catalog.dart';
 import '../../../features/services/providers/services_provider.dart';
+import '../../../features/trade_license/providers/trade_license_provider.dart';
+import '../../../features/visa_processing/providers/visa_provider.dart';
 import '../../../shared/dialogs/consultation_request_dialog.dart';
 import '../../../features/profile/ui/more_screen_extension.dart'; // INSERT: profile management
 
@@ -35,8 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ServicesProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ServicesProvider()),
+        ChangeNotifierProvider(create: (_) => CommunityProvider()),
+        ChangeNotifierProvider(create: (_) => TradeLicenseProvider()),
+        ChangeNotifierProvider(create: (_) => VisaProvider()),
+      ],
       child: Scaffold(
         body: IndexedStack(
           index: _selectedIndex,
