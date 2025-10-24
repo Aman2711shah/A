@@ -11,6 +11,7 @@ import '../../../features/community/providers/community_provider.dart';
 import '../../../features/community/models/community_post.dart';
 import '../../../features/community/widgets/community_post_card.dart';
 import '../../../features/community/widgets/community_post_composer.dart';
+import '../../../features/growth/screens/growth_services_flow_screen.dart';
 import '../../../features/services/models/service_catalog.dart';
 import '../../../features/services/providers/services_provider.dart';
 import '../../../shared/dialogs/consultation_request_dialog.dart';
@@ -580,9 +581,7 @@ class _ServicesProgress extends StatelessWidget {
                 titles[index],
                 style: TextStyle(
                   fontSize: 12,
-                  color: active
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
+                  color: active ? AppColors.primary : AppColors.textSecondary,
                   fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
@@ -619,8 +618,7 @@ class _CategoryList extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color:
-                    isSelected ? AppColors.primary : Colors.grey.shade200,
+                color: isSelected ? AppColors.primary : Colors.grey.shade200,
               ),
             ),
             child: ListTile(
@@ -669,8 +667,7 @@ class _TypeList extends StatelessWidget {
                   ),
                   Text(
                     category.subtitle,
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -736,8 +733,7 @@ class _SubServiceList extends StatelessWidget {
                   ),
                   Text(
                     category.name,
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -803,8 +799,7 @@ class _ReviewSection extends StatelessWidget {
                   ),
                   Text(
                     '${type.name} • ${category.name}',
-                    style:
-                        const TextStyle(color: AppColors.textSecondary),
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -964,8 +959,7 @@ Widget _estimateCard(SubService sub) {
                       ),
                     ),
                     Text(sub.premiumTimeline,
-                        style:
-                            const TextStyle(color: AppColors.textSecondary)),
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -982,8 +976,7 @@ Widget _estimateCard(SubService sub) {
                       ),
                     ),
                     Text(sub.standardTimeline,
-                        style:
-                            const TextStyle(color: AppColors.textSecondary)),
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -1083,6 +1076,7 @@ Widget _reviewCta(BuildContext context, ServicesProvider provider) {
     ),
   );
 }
+
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({super.key});
 
@@ -1119,8 +1113,7 @@ class _CommunityViewState extends State<_CommunityView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () =>
-                _showComingSoonDialog(context, 'Community search'),
+            onPressed: () => _showComingSoonDialog(context, 'Community search'),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -1154,8 +1147,7 @@ class _CommunityViewState extends State<_CommunityView> {
                           } catch (e) {
                             messenger.showSnackBar(
                               SnackBar(
-                                content:
-                                    Text('Unable to post right now: $e'),
+                                content: Text('Unable to post right now: $e'),
                               ),
                             );
                           } finally {
@@ -1185,8 +1177,8 @@ class _CommunityViewState extends State<_CommunityView> {
                         itemCount: provider.posts.length,
                         itemBuilder: (context, index) {
                           final post = provider.posts[index];
-                          final isLiked = user != null &&
-                              post.likes.contains(user.uid);
+                          final isLiked =
+                              user != null && post.likes.contains(user.uid);
                           final messenger = ScaffoldMessenger.of(context);
                           return CommunityPostCard(
                             post: post,
@@ -1584,6 +1576,7 @@ class __CommunityCommentsSheetState extends State<_CommunityCommentsSheet> {
     );
   }
 }
+
 class GrowthScreen extends StatelessWidget {
   final VoidCallback onNavigateToServices;
 
@@ -1661,6 +1654,23 @@ class GrowthScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const GrowthServicesFlowScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.assignment_turned_in),
+                    label: const Text('Plan My Growth Services'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(48),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Consumer<ServicesProvider>(
                     builder: (context, provider, _) {
                       if (provider.isLoading) {
