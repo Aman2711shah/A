@@ -58,7 +58,7 @@ class _MoreScreenContentState extends State<MoreScreenContent> {
     );
   }
 
-  void _navigateTo(BuildContext context, Widget page, [String? routeName]) {
+  void _navigateTo(BuildContext context, Widget page) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => page),
     );
