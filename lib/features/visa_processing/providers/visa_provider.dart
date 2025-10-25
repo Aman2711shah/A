@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 
 class VisaProvider extends ChangeNotifier {
+  VisaProvider({
+    Duration loadDelay = const Duration(seconds: 1),
+    Duration submitDelay = const Duration(seconds: 2),
+    List<Map<String, dynamic>>? initialApplications,
+  })  : _loadDelay = loadDelay,
+        _submitDelay = submitDelay,
+        _applications = initialApplications ?? [];
+
+  final Duration _loadDelay;
+  final Duration _submitDelay;
+
   bool _isLoading = false;
-  List<Map<String, dynamic>> _applications = [];
+  List<Map<String, dynamic>> _applications;
 
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get applications => _applications;
@@ -12,9 +23,8 @@ class VisaProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      
+      await Future.delayed(_loadDelay);
+
       _applications = [
         {
           'id': 'VISA_001',
@@ -53,7 +63,6 @@ class VisaProvider extends ChangeNotifier {
           'estimatedCompletion': '2024-01-28T09:15:00Z',
         },
       ];
-      
     } catch (e) {
       debugPrint('Error loading visa applications: $e');
     } finally {
@@ -62,15 +71,15 @@ class VisaProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submitVisaApplication(Map<String, dynamic> data) async {
+  Future<void> submitVisaApplication(
+    Map<String, dynamic> data,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Mock successful submission
+      await Future.delayed(_submitDelay);
+
       final application = {
         'id': 'VISA_${DateTime.now().millisecondsSinceEpoch}',
         'employeeName': data['employeeName'],
@@ -81,11 +90,11 @@ class VisaProvider extends ChangeNotifier {
         'salary': data['salary'],
         'status': 'Submitted',
         'submittedAt': DateTime.now().toIso8601String(),
-        'estimatedCompletion': DateTime.now().add(const Duration(days: 10)).toIso8601String(),
+        'estimatedCompletion':
+            DateTime.now().add(const Duration(days: 10)).toIso8601String(),
       };
-      
+
       _applications.add(application);
-      
     } catch (e) {
       debugPrint('Error submitting visa application: $e');
       rethrow;
@@ -97,7 +106,7 @@ class VisaProvider extends ChangeNotifier {
 
   void updateApplicationStatus(String applicationId, String status) {
     final index = _applications.indexWhere((app) => app['id'] == applicationId);
-    
+
     if (index != -1) {
       _applications[index]['status'] = status;
       notifyListeners();

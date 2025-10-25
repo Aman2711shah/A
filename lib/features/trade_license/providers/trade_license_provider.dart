@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 
 class TradeLicenseProvider extends ChangeNotifier {
+  TradeLicenseProvider({
+    Duration loadDelay = const Duration(seconds: 1),
+    Duration submitDelay = const Duration(seconds: 2),
+    List<Map<String, dynamic>>? initialApplications,
+  })  : _loadDelay = loadDelay,
+        _submitDelay = submitDelay,
+        _applications = initialApplications ?? [];
+
+  final Duration _loadDelay;
+  final Duration _submitDelay;
+
   bool _isLoading = false;
-  List<Map<String, dynamic>> _applications = [];
+  List<Map<String, dynamic>> _applications;
 
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get applications => _applications;
@@ -12,9 +23,8 @@ class TradeLicenseProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      
+      await Future.delayed(_loadDelay);
+
       _applications = [
         {
           'id': 'TL_001',
@@ -37,7 +47,6 @@ class TradeLicenseProvider extends ChangeNotifier {
           'estimatedCompletion': '2024-01-17T14:20:00Z',
         },
       ];
-      
     } catch (e) {
       debugPrint('Error loading trade license applications: $e');
     } finally {
@@ -46,15 +55,15 @@ class TradeLicenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> submitTradeLicenseApplication(Map<String, dynamic> data) async {
+  Future<void> submitTradeLicenseApplication(
+    Map<String, dynamic> data,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Mock successful submission
+      await Future.delayed(_submitDelay);
+
       final application = {
         'id': 'TL_${DateTime.now().millisecondsSinceEpoch}',
         'companyName': data['companyName'],
@@ -63,11 +72,11 @@ class TradeLicenseProvider extends ChangeNotifier {
         'businessActivity': data['businessActivity'],
         'status': 'Submitted',
         'submittedAt': DateTime.now().toIso8601String(),
-        'estimatedCompletion': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+        'estimatedCompletion':
+            DateTime.now().add(const Duration(days: 7)).toIso8601String(),
       };
-      
+
       _applications.add(application);
-      
     } catch (e) {
       debugPrint('Error submitting trade license application: $e');
       rethrow;
@@ -79,7 +88,6 @@ class TradeLicenseProvider extends ChangeNotifier {
 
   void updateApplicationStatus(String applicationId, String status) {
     final index = _applications.indexWhere((app) => app['id'] == applicationId);
-    
     if (index != -1) {
       _applications[index]['status'] = status;
       notifyListeners();
@@ -89,7 +97,7 @@ class TradeLicenseProvider extends ChangeNotifier {
   Map<String, dynamic>? getApplicationById(String id) {
     try {
       return _applications.firstWhere((app) => app['id'] == id);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
