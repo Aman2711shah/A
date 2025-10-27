@@ -78,6 +78,10 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   timezone: ^0.10.1
 
+  # PDF Generation
+  pdf: ^3.11.1
+  printing: ^5.13.6
+
   # UI Components
   fl_chart: ^1.1.1
   dotted_border: ^3.1.0
@@ -101,6 +105,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  fake_cloud_firestore: ^4.0.0
+  mocktail: ^1.0.3
   
   # Code Generation
   build_runner: ^2.4.7

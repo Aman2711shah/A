@@ -1,0 +1,2391 @@
+/**
+ * npm i firebase-admin
+ * GOOGLE_APPLICATION_CREDENTIALS must point to your service account JSON.
+ * node seedServices.js
+ */
+const fs = require('fs');
+const admin = require('firebase-admin');
+
+admin.initializeApp({ /* uses GOOGLE_APPLICATION_CREDENTIALS */ });
+const db = admin.firestore();
+
+(async () => {
+  const data = JSON.parse(fs.readFileSync('./firestore_service_categories.json', 'utf8'));
+
+  for (const category of data) {
+    const catRef = db.collection('service_categories').doc();
+    await catRef.set({
+      name: category.name,
+      subtitle: category.subtitle || '',
+      overview: category.overview || '',
+      benefits: Array.isArray(category.benefits) ? category.benefits : [],
+      requirements: Array.isArray(category.requirements) ? category.requirements : [],
+      // tip: add slug if you want stable IDs
+    });
+
+    const types = Array.isArray(category.types) ? category.types : [];
+    for (const t of types) {
+      // use type name as doc id (slug) if you want stable URLs
+      const typeRef = catRef.collection('types').doc();
+      await typeRef.set({
+        name: t.name,
+        description: t.description || '',
+        subServices: (t.subServices || []).map(ss => ({
+          name: ss.name,
+          premiumCost: ss.premiumCost ?? null,
+          standardCost: ss.standardCost ?? null,
+          premiumTimeline: ss.premiumTimeline || '',
+          standardTimeline: ss.standardTimeline || '',
+          documents: Array.isArray(ss.documents) ? ss.documents : []
+        }))
+      });
+    }
+  }
+
+  console.log('✅ Seed complete');
+  process.exit(0);
+})();
+[
+  {
+    "name": "Visa and Imigration service",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Employment",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuanse",
+            "premiumCost": 4000,
+            "standardCost": 3300,
+            "premiumTimeline": "5-6 days",
+            "standardTimeline": "6-8 days",
+            "documents": [
+              "Passport",
+              "photo",
+              "offer letter",
+              "license copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "description": "",
+        "subServices": [
+          {
+            "name": "renewal",
+            "premiumCost": 3500,
+            "standardCost": 2900,
+            "premiumTimeline": "4-5 days",
+            "standardTimeline": "5-6 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "Emirates ID"
+            ]
+          },
+          {
+            "name": "cancel",
+            "premiumCost": 1350,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "cancellation form"
+            ]
+          },
+          {
+            "name": "renewal",
+            "premiumCost": 3000,
+            "standardCost": 2500,
+            "premiumTimeline": "3-4 days",
+            "standardTimeline": "4-5 days",
+            "documents": [
+              "Sponsor documents",
+              "visa",
+              "tenancy"
+            ]
+          },
+          {
+            "name": "cancel",
+            "premiumCost": 1350,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "cancellation form"
+            ]
+          },
+          {
+            "name": "renewal",
+            "premiumCost": 3500,
+            "standardCost": 2900,
+            "premiumTimeline": "4-5 days",
+            "standardTimeline": "5-7 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "Emirates ID"
+            ]
+          },
+          {
+            "name": "cancel",
+            "premiumCost": 1350,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "cancellation form"
+            ]
+          },
+          {
+            "name": "renewal",
+            "premiumCost": 7500,
+            "standardCost": 6000,
+            "premiumTimeline": "5-6 days",
+            "standardTimeline": "7-8 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "Emirates ID"
+            ]
+          },
+          {
+            "name": "cancel",
+            "premiumCost": 1350,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "cancellation form"
+            ]
+          },
+          {
+            "name": "renewal",
+            "premiumCost": 9000,
+            "standardCost": 8000,
+            "premiumTimeline": "8-10 days",
+            "standardTimeline": "12-15 days",
+            "documents": [
+              "Passport",
+              "Emirates ID",
+              "renewal request"
+            ]
+          },
+          {
+            "name": "cancel",
+            "premiumCost": 1350,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "cancellation form"
+            ]
+          },
+          {
+            "name": "VIP",
+            "premiumCost": 1250,
+            "standardCost": 1100,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "3 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dependent",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuanse",
+            "premiumCost": 3500,
+            "standardCost": 2900,
+            "premiumTimeline": "4-5 days",
+            "standardTimeline": "5-7 days",
+            "documents": [
+              "Sponsor's passport",
+              "visa",
+              "birth",
+              "marriage certificate",
+              "tenancy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Investor",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuance",
+            "premiumCost": 4700,
+            "standardCost": 4000,
+            "premiumTimeline": "5-7 days",
+            "standardTimeline": "7-10 days",
+            "documents": [
+              "Passport",
+              "photo",
+              "Emirates ID copy",
+              "trade license"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Freelance",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuance",
+            "premiumCost": 8000,
+            "standardCost": 6500,
+            "premiumTimeline": "6-8 days",
+            "standardTimeline": "8-10 days",
+            "documents": [
+              "Passport",
+              "photo",
+              "portfolio",
+              "NOC",
+              "bank statement"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Golden",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuance",
+            "premiumCost": 10000,
+            "standardCost": 8500,
+            "premiumTimeline": "10-12 days",
+            "standardTimeline": "15-20 days",
+            "documents": [
+              "Passport",
+              "Emirates ID",
+              "investment proof"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Housemaid",
+        "description": "",
+        "subServices": [
+          {
+            "name": "issuance",
+            "premiumCost": 6500,
+            "standardCost": 5500,
+            "premiumTimeline": "7-10 days",
+            "standardTimeline": "10-14 days",
+            "documents": [
+              "Sponsor passport",
+              "visa",
+              "salary proof",
+              "maid passport",
+              "photo"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Emirates ID Typing",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Emirates ID Typing",
+            "premiumCost": 780,
+            "standardCost": 700,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "1-2 days",
+            "documents": [
+              "Passport",
+              "visa page",
+              "photo"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Change of status",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Change of status",
+            "premiumCost": 1250,
+            "standardCost": 1100,
+            "premiumTimeline": "2 days",
+            "standardTimeline": "2-3 days",
+            "documents": [
+              "Entry permit",
+              "visa",
+              "passport"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Entry Permit Issuance",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Entry Permit Issuance",
+            "premiumCost": 1200,
+            "standardCost": 1050,
+            "premiumTimeline": "2-3 days",
+            "standardTimeline": "3-4 days",
+            "documents": [
+              "Trade license",
+              "passport",
+              "visa copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "OverstayFine Payment",
+        "description": "",
+        "subServices": [
+          {
+            "name": "OverstayFine Payment",
+            "premiumCost": 800,
+            "standardCost": 700,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "1-2 days",
+            "documents": [
+              "Passport",
+              "visa",
+              "overstay details"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Federal Tax Authority",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Corporate tax",
+        "description": "",
+        "subServices": [
+          {
+            "name": "registration",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1-2 days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade license",
+              "Emirates ID",
+              "Passport (natural person)",
+              "authorization proof (legal person)"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "description": "",
+        "subServices": [
+          {
+            "name": "submission",
+            "premiumCost": 700,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Audited financial statements",
+              "tax calculation data"
+            ]
+          },
+          {
+            "name": "deregistration",
+            "premiumCost": 700,
+            "standardCost": 500,
+            "premiumTimeline": "3-5 days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Proof of cessation",
+              "deregistration request",
+              "turnover statement"
+            ]
+          },
+          {
+            "name": "amendment",
+            "premiumCost": 800,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Updated trade license",
+              "revised financials"
+            ]
+          },
+          {
+            "name": "VAT return filing",
+            "premiumCost": 2500,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Input",
+              "output VAT invoices",
+              "reverse charge data",
+              "tax ledger"
+            ]
+          },
+          {
+            "name": "refund request",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "10-15 working days",
+            "standardTimeline": "15-20 working days",
+            "documents": [
+              "Invoices",
+              "housing certificates",
+              "diplomatic ID",
+              "passport",
+              "project docs"
+            ]
+          },
+          {
+            "name": "return filing",
+            "premiumCost": 3000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Monthly",
+              "quarterly sales reports",
+              "excise declarations"
+            ]
+          },
+          {
+            "name": "product registration",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "10-20 business days",
+            "standardTimeline": "15-25 working days",
+            "documents": [
+              "Product labels",
+              "conformity certificate",
+              "food label assessment (if needed)"
+            ]
+          },
+          {
+            "name": "warehouse approval",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "5-10 days",
+            "standardTimeline": "10-12 working days",
+            "documents": [
+              "Warehouse layout",
+              "approval forms"
+            ]
+          },
+          {
+            "name": "refund application",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "10-15 working days",
+            "standardTimeline": "15-20 working days",
+            "documents": [
+              "Export certificates",
+              "customs and shipping docs"
+            ]
+          },
+          {
+            "name": "foregn businesses",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "20 working days",
+            "standardTimeline": "25 working days",
+            "documents": [
+              "Diplomatic ID",
+              "passport",
+              "signed declaration"
+            ]
+          },
+          {
+            "name": "embassies, missions",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "15-20 working days",
+            "standardTimeline": "20-25 working days",
+            "documents": [
+              "Shipping",
+              "export certificates"
+            ]
+          },
+          {
+            "name": "exported goods",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "10-15 working days",
+            "standardTimeline": "15-20 working days",
+            "documents": [
+              "Bank account details on bank letterhead"
+            ]
+          },
+          {
+            "name": "Payment via UAE banks",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2 working days",
+            "documents": []
+          },
+          {
+            "name": "Statement of account & payment",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "FTA penalty notice",
+              "payment proof"
+            ]
+          },
+          {
+            "name": "commercial activities certificates",
+            "premiumCost": 1500,
+            "standardCost": 1000,
+            "premiumTimeline": "2-3 days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Filed VAT returns",
+              "compliance audit proof"
+            ]
+          },
+          {
+            "name": "VAT compliance certificate",
+            "premiumCost": 500,
+            "standardCost": 300,
+            "premiumTimeline": "2-3 days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Filed VAT returns",
+              "compliance audit proof"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Value Added Tax",
+        "description": "",
+        "subServices": [
+          {
+            "name": "registration",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade license",
+              "Emirates ID",
+              "financial records",
+              "turnover forecast"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Excise Tax",
+        "description": "",
+        "subServices": [
+          {
+            "name": "registration & deregistration",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "2-3 days",
+            "standardTimeline": "4-5 working days",
+            "documents": [
+              "Trade license",
+              "Emirates ID",
+              "authorization letter",
+              "bank letter",
+              "company docs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Refund Services",
+        "description": "",
+        "subServices": [
+          {
+            "name": "UAE national buildings",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "7-10 days",
+            "standardTimeline": "10-15 working days",
+            "documents": [
+              "Housing completion cert",
+              "invoices",
+              "building contract"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Payment & Accounting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Generating GIBAN",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Linked bank",
+              "card account"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Tax Clearance & Certificates",
+        "description": "",
+        "subServices": [
+          {
+            "name": "tax residency certificates",
+            "premiumCost": "1500-3000",
+            "standardCost": "1000-2250",
+            "premiumTimeline": "10 working days",
+            "standardTimeline": "10-15 working days",
+            "documents": [
+              "Trade license",
+              "official request letter"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Appeals & Reconsiderations",
+        "description": "",
+        "subServices": [
+          {
+            "name": "request for reconsideration",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "15-20 days",
+            "standardTimeline": "20-25 working days",
+            "documents": [
+              "Reconsideration form",
+              "invoices",
+              "clarifications",
+              "legal proof"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Banking Services",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Open Personal Bank Account",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Open Personal Bank Account",
+            "premiumCost": "1000-1200",
+            "standardCost": "500 to AED 605",
+            "premiumTimeline": "1-3 working days",
+            "standardTimeline": "3 working days",
+            "documents": [
+              "Passport",
+              "Emirates ID",
+              "visa page",
+              "salary certificate or bank statement"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Open Business Bank Account",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Open Business Bank Account",
+            "premiumCost": "1000-5000",
+            "standardCost": "500 to AED 3,000",
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Trade license",
+              "MOA",
+              "passport",
+              "visa",
+              "Emirates ID of shareholders",
+              "tenancy contract (Ejari)",
+              "utility bill"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Salary Account Setup",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Salary Account Setup",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1 day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Passport",
+              "visa",
+              "Emirates ID",
+              "salary certificate"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Non-Resident Account Opening",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Non-Resident Account Opening",
+            "premiumCost": "1000-1200",
+            "standardCost": "AED 600-750",
+            "premiumTimeline": "2-4 working days",
+            "standardTimeline": "4 working days",
+            "documents": [
+              "Passport",
+              "visa (if applicable)",
+              "utility bill or foreign bank statement"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Account Closure",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Account Closure",
+            "premiumCost": "1000-1200",
+            "standardCost": "500 to AED 605",
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "ID",
+              "passport",
+              "written request or account closure form"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Credit Card Application",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Credit Card Application",
+            "premiumCost": "1000-1200",
+            "standardCost": "500 to AED 800",
+            "premiumTimeline": "2-5 working days",
+            "standardTimeline": "5 working days",
+            "documents": [
+              "Salary certificate",
+              "Emirates ID",
+              "passport",
+              "credit score check"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Accounting & Bookkeeping",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Bookkeeping",
+        "description": "",
+        "subServices": [
+          {
+            "name": "basic monthly",
+            "premiumCost": 1800,
+            "standardCost": 1300,
+            "premiumTimeline": "monthly",
+            "standardTimeline": "monthly",
+            "documents": [
+              "Bank statements",
+              "sales",
+              "purchase invoices",
+              "petty cash receipts"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "description": "",
+        "subServices": [
+          {
+            "name": "VAT Reconciliation",
+            "premiumCost": 2000,
+            "standardCost": 1500,
+            "premiumTimeline": "monthly/quaterly",
+            "standardTimeline": "monthly/quaterly",
+            "documents": [
+              "VAT certificate",
+              "sales",
+              "purchase invoices",
+              "tax invoices",
+              "bank statements"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Full Accounting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Full Accounting",
+            "premiumCost": 3000,
+            "standardCost": 2500,
+            "premiumTimeline": "monthly",
+            "standardTimeline": "monthly",
+            "documents": [
+              "Bank statements",
+              "trial balance",
+              "invoices",
+              "salary slips"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Monthly Financial Reporting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Monthly Financial Reporting",
+            "premiumCost": 2200,
+            "standardCost": 1700,
+            "premiumTimeline": "monthly",
+            "standardTimeline": "monthly",
+            "documents": [
+              "Trial balance",
+              "P&L",
+              "ledger summaries",
+              "bank reconciliation"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "VAT return filing(Quaterly)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "VAT return filing(Quaterly)",
+            "premiumCost": 2500,
+            "standardCost": 2000,
+            "premiumTimeline": "quaterly",
+            "standardTimeline": "quaterly",
+            "documents": [
+              "VAT certificate",
+              "VAT invoices",
+              "FTA credentials"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "VAT Registration",
+        "description": "",
+        "subServices": [
+          {
+            "name": "VAT Registration",
+            "premiumCost": 1500,
+            "standardCost": 1000,
+            "premiumTimeline": "one time",
+            "standardTimeline": "one time",
+            "documents": [
+              "Trade license",
+              "Emirates ID",
+              "passport",
+              "bank letter"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Payroll Processing",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Payroll Processing",
+            "premiumCost": 1000,
+            "standardCost": 600,
+            "premiumTimeline": "monthly",
+            "standardTimeline": "monthly",
+            "documents": [
+              "Employee passport",
+              "visa",
+              "salary details",
+              "WPS file"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Corporate Tax Registration",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Corporate Tax Registration",
+            "premiumCost": 1500,
+            "standardCost": 1000,
+            "premiumTimeline": "one time",
+            "standardTimeline": "one time",
+            "documents": [
+              "Trade license",
+              "MOA",
+              "Emirates ID",
+              "passport",
+              "FTA login"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Annual Financial Statements",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Annual Financial Statements",
+            "premiumCost": 4000,
+            "standardCost": 3500,
+            "premiumTimeline": "annually",
+            "standardTimeline": "annually",
+            "documents": [
+              "Trial balance",
+              "ledgers",
+              "fixed asset list",
+              "bank statements"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Virtual CFO Services",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Virtual CFO Services",
+            "premiumCost": 4000,
+            "standardCost": 3500,
+            "premiumTimeline": "monthly/quaterly",
+            "standardTimeline": "monthly/quaterly",
+            "documents": [
+              "Historical financials",
+              "forecasts",
+              "business plans",
+              "cap table (if any)"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Audit Suppport Services",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Audit Suppport Services",
+            "premiumCost": "3000-6000",
+            "standardCost": "2,500-5,500",
+            "premiumTimeline": "on demand/annually",
+            "standardTimeline": "on demand/annually",
+            "documents": [
+              "Audit trail",
+              "general ledger",
+              "invoices",
+              "bank statements"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Internal Audit check",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Internal Audit check",
+            "premiumCost": "4000-8000",
+            "standardCost": "3,500-7,500",
+            "premiumTimeline": "quaterly/annually",
+            "standardTimeline": "quaterly/annually",
+            "documents": [
+              "Internal policies",
+              "compliance reports",
+              "transaction records"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Accounts Payable/ Receivable",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Accounts Payable/ Receivable",
+            "premiumCost": "2000-3500",
+            "standardCost": "1,500-3,000",
+            "premiumTimeline": "monthly",
+            "standardTimeline": "monthly",
+            "documents": [
+              "Invoices",
+              "payment vouchers",
+              "customer statements",
+              "supplier contracts"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Attestation & Legalization",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "MOFA attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "personal documents",
+            "premiumCost": "1000-1200",
+            "standardCost": "650-700",
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Original document",
+              "passport copy",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "description": "",
+        "subServices": [
+          {
+            "name": "commercial documents",
+            "premiumCost": "3000-3500",
+            "standardCost": "2,500-3,000",
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Trade license",
+              "invoice",
+              "MOA",
+              "original documents"
+            ]
+          },
+          {
+            "name": "corporate",
+            "premiumCost": "1500-2000",
+            "standardCost": "900-1100",
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Board resolution",
+              "passport",
+              "license",
+              "MOA"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Embassy Attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Embassy Attestation",
+            "premiumCost": "1000-1500",
+            "standardCost": "600-800",
+            "premiumTimeline": "3-7 working days",
+            "standardTimeline": "5-8 working days",
+            "documents": [
+              "Document to be attested",
+              "passport copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Notary Attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Notary Attestation",
+            "premiumCost": "1000-1500",
+            "standardCost": "650-750",
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "POA or affidavit",
+              "Emirates ID",
+              "passport"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Ministry of Justice Attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Ministry of Justice Attestation",
+            "premiumCost": "1000-1500",
+            "standardCost": "550-600",
+            "premiumTimeline": "1 day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Original attested doc",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Educational certificate attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Educational certificate attestation",
+            "premiumCost": "1200-2000",
+            "standardCost": "700-850",
+            "premiumTimeline": "2-4 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Degree certificate",
+              "transcript",
+              "passport copy",
+              "visa"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Birth/ Marriage certificate",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Birth/ Marriage certificate",
+            "premiumCost": "1200-2000",
+            "standardCost": "700-800",
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Original certificate",
+              "passport copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "PCC Attestation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "PCC Attestation",
+            "premiumCost": "1200-2000",
+            "standardCost": "750-850",
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-6 working days",
+            "documents": [
+              "Original PCC",
+              "Emirates ID",
+              "passport"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Power of Attorney",
+        "description": "",
+        "subServices": [
+          {
+            "name": "personal documents",
+            "premiumCost": "1200-2000",
+            "standardCost": "700-800",
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Draft POA",
+              "passport",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Company documents legalization",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Company documents legalization",
+            "premiumCost": "1500-2000",
+            "standardCost": "1000-1500",
+            "premiumTimeline": "4-6 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Trade license",
+              "MOA",
+              "AoA",
+              "passport"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Medical certificate Attestration",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Medical certificate Attestration",
+            "premiumCost": "1200-1800",
+            "standardCost": "700-800",
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Medical certificate",
+              "ID",
+              "passport"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "PRO Services",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "New Company Trade License",
+        "description": "",
+        "subServices": [
+          {
+            "name": "application",
+            "premiumCost": "3500-5500",
+            "standardCost": 2500,
+            "premiumTimeline": "2-4 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Passport copy",
+              "name approval",
+              "NOC if required"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "description": "",
+        "subServices": [
+          {
+            "name": "renewal",
+            "premiumCost": "2300-3000",
+            "standardCost": 1700,
+            "premiumTimeline": "1-3 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Trade license",
+              "tenancy",
+              "passport copies of partners"
+            ]
+          },
+          {
+            "name": "VIP/ urgent",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "1 working day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Passport",
+              "visa page",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Emirates ID Typing & Biometrics",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Emirates ID Typing & Biometrics",
+            "premiumCost": 750,
+            "standardCost": 650,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Passport copy",
+              "photo",
+              "visa copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Establishment card issuance",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Establishment card issuance",
+            "premiumCost": 700,
+            "standardCost": 1250,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Trade license",
+              "passport",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Labour Card(MOHRE) application",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Labour Card(MOHRE) application",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Passport",
+              "visa page",
+              "company license"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Immigration card application/ Renewal",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Immigration card application/ Renewal",
+            "premiumCost": 1300,
+            "standardCost": 950,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "License copy",
+              "tenancy",
+              "passport copies"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Medical Test",
+        "description": "",
+        "subServices": [
+          {
+            "name": "standard",
+            "premiumCost": 900,
+            "standardCost": 750,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Passport",
+              "visa page",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Visa Stamping",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Visa Stamping",
+            "premiumCost": 1300,
+            "standardCost": 1000,
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Medical test result",
+              "Emirates ID",
+              "insurance"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dependent Visa Processing",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dependent Visa Processing",
+            "premiumCost": 1250,
+            "standardCost": 900,
+            "premiumTimeline": "4-6 working days",
+            "standardTimeline": "6-8 working days",
+            "documents": [
+              "Sponsor and dependent passport",
+              "photo",
+              "visa"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Visa Cancellation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Visa Cancellation",
+            "premiumCost": 900,
+            "standardCost": 750,
+            "premiumTimeline": "2 working days",
+            "standardTimeline": "3 working days",
+            "documents": [
+              "Passport copy",
+              "Emirates ID",
+              "visa page"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "P.O. Box Setup & Renewal",
+        "description": "",
+        "subServices": [
+          {
+            "name": "P.O. Box Setup & Renewal",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade license",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Document Pickup & Delivery",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Document Pickup & Delivery",
+            "premiumCost": "500-650",
+            "standardCost": 550,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Location address",
+              "contact person"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Third Party Approval",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "DED(Dubai Economic Department)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "DED(Dubai Economic Department)",
+            "premiumCost": 1000,
+            "standardCost": 500,
+            "premiumTimeline": "1-2 days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade name reservation",
+              "initial approval",
+              "ID documents"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Civil Defense Approval",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Civil Defense Approval",
+            "premiumCost": "1300-1,500",
+            "standardCost": 1000,
+            "premiumTimeline": "3-5 days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Location tenancy contract",
+              "layout plan",
+              "business license"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dubai Municipality",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dubai Municipality",
+            "premiumCost": "1,500-1,700",
+            "standardCost": 1100,
+            "premiumTimeline": "3-7 days",
+            "standardTimeline": "5-8 working days",
+            "documents": [
+              "Floor plan",
+              "Ejari",
+              "NOC from landlord",
+              "ID copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Food Safety Department",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Food Safety Department",
+            "premiumCost": "1,700-2,000",
+            "standardCost": 1200,
+            "premiumTimeline": "3-5 days",
+            "standardTimeline": "5-6 working days",
+            "documents": [
+              "Menu",
+              "layout drawings",
+              "Ejari",
+              "license copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Knowledge & Human Development Authority",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Knowledge & Human Development Authority",
+            "premiumCost": "2,500-3,000",
+            "standardCost": 1500,
+            "premiumTimeline": "5-10 days",
+            "standardTimeline": "7-12 working days",
+            "documents": [
+              "Education business plan",
+              "curriculum",
+              "lease",
+              "passports"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Roads & Transport Authority",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Roads & Transport Authority",
+            "premiumCost": "1,700-2,000",
+            "standardCost": 1300,
+            "premiumTimeline": "5-7 days",
+            "standardTimeline": "7-10 working days",
+            "documents": [
+              "Vehicle list",
+              "lease contract",
+              "driver info"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dubai Health Authority",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dubai Health Authority",
+            "premiumCost": "2,000-2,500",
+            "standardCost": 1500,
+            "premiumTimeline": "5-7 days",
+            "standardTimeline": "7-10 working days",
+            "documents": [
+              "Medical degrees",
+              "facility layout",
+              "ID proof"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Ministry of Health",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Ministry of Health",
+            "premiumCost": "2,500-3,500",
+            "standardCost": 2000,
+            "premiumTimeline": "7-10 days",
+            "standardTimeline": "10-12 working days",
+            "documents": [
+              "MOH licensing",
+              "floor plan",
+              "ID",
+              "license copies"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dubai Tourism",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dubai Tourism",
+            "premiumCost": "2,000-2,500",
+            "standardCost": 1500,
+            "premiumTimeline": "5-7 days",
+            "standardTimeline": "7-10 working days",
+            "documents": [
+              "Tourism NOC",
+              "itinerary plan",
+              "business profile"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Telecommunication Regulatory Authority",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Telecommunication Regulatory Authority",
+            "premiumCost": "2,500-3,000",
+            "standardCost": 2000,
+            "premiumTimeline": "5-7 days",
+            "standardTimeline": "7-10 working days",
+            "documents": [
+              "Trade license",
+              "technical description",
+              "passport",
+              "ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dubai Civil Aviation Authority",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dubai Civil Aviation Authority",
+            "premiumCost": "2,500-3,000",
+            "standardCost": 1700,
+            "premiumTimeline": "5-10 days",
+            "standardTimeline": "7-12 working days",
+            "documents": [
+              "Flight operation plan",
+              "license",
+              "insurance",
+              "IDs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Dubai Police/ CID",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Dubai Police/ CID",
+            "premiumCost": "1000-1,200",
+            "standardCost": 800,
+            "premiumTimeline": "2-3 days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Passport copy",
+              "reason for clearance",
+              "application form"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ESR Compliance",
+        "description": "",
+        "subServices": [
+          {
+            "name": "ESR Compliance",
+            "premiumCost": 1500,
+            "standardCost": 1000,
+            "premiumTimeline": "3-5 days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Financials",
+              "ownership info",
+              "business activity details"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Legal Service",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "MOA drafting & notarization",
+        "description": "",
+        "subServices": [
+          {
+            "name": "MOA drafting & notarization",
+            "premiumCost": 2000,
+            "standardCost": 1500,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade license",
+              "passport copy",
+              "partner details"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Legal translation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Legal translation",
+            "premiumCost": 900,
+            "standardCost": 700,
+            "premiumTimeline": "1 working day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Document to be translated"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Power of Attorney drafting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Power of Attorney drafting",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Passport copy",
+              "details of POA"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Shareholder Agreement",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Shareholder Agreement",
+            "premiumCost": 3000,
+            "standardCost": 2300,
+            "premiumTimeline": "2-4 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Trade license",
+              "partner passport copies"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Trademark Registration",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Trademark Registration",
+            "premiumCost": 4000,
+            "standardCost": 3000,
+            "premiumTimeline": "5-7 working days",
+            "standardTimeline": "7-10 working days",
+            "documents": [
+              "Trademark name",
+              "logo",
+              "activity",
+              "passport"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Court Case Filing(Business dispute)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Court Case Filing(Business dispute)",
+            "premiumCost": 7500,
+            "standardCost": 5500,
+            "premiumTimeline": "8-10 working days",
+            "standardTimeline": "10-15 working days",
+            "documents": [
+              "License copy",
+              "evidence",
+              "ID copies"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Contract Review & Advice",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Contract Review & Advice",
+            "premiumCost": 1700,
+            "standardCost": 1400,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-4 working days",
+            "documents": [
+              "Contract copy",
+              "business license"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Legal Consultation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Legal Consultation",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "ID copy",
+              "relevant documents"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Civil Case Consultation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Civil Case Consultation",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Claim summary",
+              "passport copy"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Legal Notice Drafting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Legal Notice Drafting",
+            "premiumCost": 1300,
+            "standardCost": 1000,
+            "premiumTimeline": "1 working day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Concerned party details",
+              "case facts"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Employment Contract Drafting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Employment Contract Drafting",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Employee details",
+              "terms & conditions"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Payroll & HR services",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Payroll Management(monthly)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Payroll Management(monthly)",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "2 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Employee list",
+              "salary details",
+              "WPS file"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "WPS File Generation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "WPS File Generation",
+            "premiumCost": 650,
+            "standardCost": 600,
+            "premiumTimeline": "1 working day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Employee details",
+              "bank IBANs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Employee Contract Management",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Employee Contract Management",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Employment terms",
+              "IDs",
+              "job description"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Employee Onboarding(visa & labor)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Employee Onboarding(visa & labor)",
+            "premiumCost": 2000,
+            "standardCost": 1600,
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Passport",
+              "visa",
+              "photo",
+              "offer letter"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Employee Offboarding & cancellation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Employee Offboarding & cancellation",
+            "premiumCost": 1700,
+            "standardCost": 1400,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-5 working days",
+            "documents": [
+              "Passport",
+              "visa",
+              "clearance documents"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Salary Certificate Issuance",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Salary Certificate Issuance",
+            "premiumCost": 600,
+            "standardCost": 550,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Employee ID",
+              "salary record"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Leave & Attendance Management",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Leave & Attendance Management",
+            "premiumCost": 1200,
+            "standardCost": 1000,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Attendance sheets",
+              "leave requests"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "End of Service Benefit Calculations",
+        "description": "",
+        "subServices": [
+          {
+            "name": "End of Service Benefit Calculations",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Employee contract",
+              "duration",
+              "last salary"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "HR Policy Drafting",
+        "description": "",
+        "subServices": [
+          {
+            "name": "HR Policy Drafting",
+            "premiumCost": 2000,
+            "standardCost": 1500,
+            "premiumTimeline": "2-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Company objectives",
+              "HR practices"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Monthly Payroll Reports",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Monthly Payroll Reports",
+            "premiumCost": 900,
+            "standardCost": 750,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Salary summary",
+              "employee info"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "HR Consultation(hourly)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "HR Consultation(hourly)",
+            "premiumCost": 800,
+            "standardCost": 700,
+            "premiumTimeline": "same day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Consultation brief",
+              "HR topics"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Advisory Services",
+    "subtitle": "",
+    "overview": "",
+    "benefits": [],
+    "requirements": [],
+    "types": [
+      {
+        "name": "Business setup consultation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Business setup consultation",
+            "premiumCost": 1000,
+            "standardCost": 800,
+            "premiumTimeline": "1 working days",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Basic business idea & background"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Freezone vs Mainland feasibility report",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Freezone vs Mainland feasibility report",
+            "premiumCost": 2000,
+            "standardCost": 1500,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Company concept",
+              "industry & budget"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Corporate Tax Advisory",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Corporate Tax Advisory",
+            "premiumCost": 1700,
+            "standardCost": 1400,
+            "premiumTimeline": "2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Trade license",
+              "revenue",
+              "expenses"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "VAT advisory & optimization",
+        "description": "",
+        "subServices": [
+          {
+            "name": "VAT advisory & optimization",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "1-2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "VAT filings",
+              "invoices",
+              "expense sheets"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Accountinghealth check",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Accountinghealth check",
+            "premiumCost": 1300,
+            "standardCost": 1100,
+            "premiumTimeline": "2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Last 6 months reports & bank statements"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Investment & Expansion strategy",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Investment & Expansion strategy",
+            "premiumCost": 3000,
+            "standardCost": 2300,
+            "premiumTimeline": "3-5 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "Company background",
+              "market plans"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Bank account Advisory",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Bank account Advisory",
+            "premiumCost": 1200,
+            "standardCost": 1000,
+            "premiumTimeline": "1 working day",
+            "standardTimeline": "1-2 working days",
+            "documents": [
+              "Owner passport copy",
+              "trade license"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "UAE golden visa consultation",
+        "description": "",
+        "subServices": [
+          {
+            "name": "UAE golden visa consultation",
+            "premiumCost": 1500,
+            "standardCost": 1200,
+            "premiumTimeline": "2-3 working days",
+            "standardTimeline": "3-4 working days",
+            "documents": [
+              "Passport copy",
+              "visa history",
+              "Emirates ID"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Cross-border structuring",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Cross-border structuring",
+            "premiumCost": 2500,
+            "standardCost": 2000,
+            "premiumTimeline": "4-6 working days",
+            "standardTimeline": "5-7 working days",
+            "documents": [
+              "International entities",
+              "ownership plan"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Startup pitch deck review",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Startup pitch deck review",
+            "premiumCost": 1300,
+            "standardCost": 1000,
+            "premiumTimeline": "2 working days",
+            "standardTimeline": "2-3 working days",
+            "documents": [
+              "Existing deck",
+              "business model details"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Custom advisory session(1hr)",
+        "description": "",
+        "subServices": [
+          {
+            "name": "Custom advisory session(1hr)",
+            "premiumCost": 900,
+            "standardCost": 750,
+            "premiumTimeline": "same day",
+            "standardTimeline": "2 working days",
+            "documents": [
+              "Query brief",
+              "business background"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

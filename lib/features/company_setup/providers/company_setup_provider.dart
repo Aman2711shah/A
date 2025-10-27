@@ -4,8 +4,16 @@ import '../services/wizard_persistence_service.dart';
 import '../../../core/services/firebase_firestore_service.dart';
 
 class CompanySetupProvider extends ChangeNotifier {
+  CompanySetupProvider({
+    FirebaseAuth? auth,
+    FirestoreService? firestoreService,
+  })  : _auth = auth ?? FirebaseAuth.instance,
+        _firestoreService = firestoreService ?? FirestoreService();
+
   int _currentStep = 0;
   final int _totalSteps = 7;
+  final FirebaseAuth _auth;
+  final FirestoreService _firestoreService;
 
   // Form data
   String? _selectedActivity;
@@ -41,7 +49,7 @@ class CompanySetupProvider extends ChangeNotifier {
 
   // Initialize and load saved progress
   Future<void> initialize() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user != null && _autoSaveEnabled) {
       await loadProgress(user.uid);
     }
@@ -51,7 +59,7 @@ class CompanySetupProvider extends ChangeNotifier {
   Future<void> saveProgress() async {
     if (!_autoSaveEnabled) return;
 
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user == null) return;
 
     final formData = {
@@ -125,7 +133,7 @@ class CompanySetupProvider extends ChangeNotifier {
 
   // Clear saved progress
   Future<void> clearProgress() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user != null) {
       await WizardPersistenceService.clearProgress(user.uid);
     }
@@ -133,7 +141,7 @@ class CompanySetupProvider extends ChangeNotifier {
 
   // Check if saved progress exists
   Future<bool> hasSavedProgress() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _auth.currentUser;
     if (user == null) return false;
     return await WizardPersistenceService.hasSavedProgress(user.uid);
   }
@@ -288,8 +296,6 @@ class CompanySetupProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final firestoreService = FirestoreService();
-
       // Prepare submission data
       final submissionData = {
         'type': 'company_setup',
@@ -306,14 +312,14 @@ class CompanySetupProvider extends ChangeNotifier {
         }).toList(),
         'status': 'pending',
         'progressPercentage': 0,
-        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'userId': _auth.currentUser?.uid,
         'nextSteps':
             'Your application is being reviewed by our team. We will contact you within 24-48 hours.',
       };
 
       // Submit to Firestore
       final applicationId =
-          await firestoreService.createApplication(submissionData);
+          await _firestoreService.createApplication(submissionData);
 
       // Clear saved progress after successful submission
       await clearProgress();

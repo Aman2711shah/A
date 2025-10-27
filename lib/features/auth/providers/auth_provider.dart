@@ -68,6 +68,11 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       rethrow;
+    } finally {
+      if (_isLoading) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -108,6 +113,11 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       rethrow;
+    } finally {
+      if (_isLoading) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -158,6 +168,11 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       rethrow;
+    } finally {
+      if (_isLoading) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 }

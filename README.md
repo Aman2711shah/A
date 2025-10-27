@@ -7,7 +7,33 @@
   <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
 </div>
 
-## 📱 Overview
+## � **DOWNLOAD APK**
+
+<div align="center">
+
+### 🚀 **Get WAZEET Now!**
+
+**Latest Version: v1.0.0** | **File Size: 72 MB** | **Min SDK: Android 5.0+**
+
+[![Download APK](https://img.shields.io/badge/📱_Download_APK-v1.0.0-brightgreen?style=for-the-badge&logo=android)](https://github.com/Aman2711shah/A/releases/download/v1.0.0/app-release.apk)
+
+> **Installation Instructions:**
+> 1. Download the APK file from the link above
+> 2. On your Android device, go to Settings → Security
+> 3. Enable "Unknown Sources" (varies by device)
+> 4. Open the downloaded APK and tap Install
+> 5. Launch WAZEET from your app drawer
+
+**System Requirements:**
+- Android 5.0 or higher
+- 100 MB free storage space
+- Internet connection for cloud features
+
+</div>
+
+---
+
+## �📱 Overview
 
 WAZEET is a comprehensive native mobile application built with Flutter that serves as a business setup and trade license platform specifically designed for the UAE market. The app streamlines company formation, visa processing, trade license applications, and various business services to help entrepreneurs and businesses establish their presence in the United Arab Emirates.
 

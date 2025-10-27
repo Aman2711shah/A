@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/firestore/trade_license_firestore_service.dart';
 
 class TradeLicenseProvider extends ChangeNotifier {
+  TradeLicenseProvider({
+    List<Map<String, dynamic>>? initialApplications,
+  }) : _applications = initialApplications ?? [];
+
+  final _firestoreService = TradeLicenseFirestoreService.instance;
+
   bool _isLoading = false;
-  List<Map<String, dynamic>> _applications = [];
+  List<Map<String, dynamic>> _applications;
 
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get applications => _applications;
@@ -12,64 +19,35 @@ class TradeLicenseProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      
-      _applications = [
-        {
-          'id': 'TL_001',
-          'companyName': 'ABC Trading LLC',
-          'tradeName': 'ABC Trading',
-          'licenseType': 'Commercial License',
-          'businessActivity': 'General Trading',
-          'status': 'In Review',
-          'submittedAt': '2024-01-15T10:30:00Z',
-          'estimatedCompletion': '2024-01-22T10:30:00Z',
-        },
-        {
-          'id': 'TL_002',
-          'companyName': 'XYZ Services LLC',
-          'tradeName': 'XYZ Services',
-          'licenseType': 'Professional License',
-          'businessActivity': 'Consulting Services',
-          'status': 'Approved',
-          'submittedAt': '2024-01-10T14:20:00Z',
-          'estimatedCompletion': '2024-01-17T14:20:00Z',
-        },
-      ];
-      
+      // Load applications from Firestore
+      _applications = await _firestoreService.getUserApplications();
+      debugPrint('✅ Loaded ${_applications.length} applications from Firestore');
     } catch (e) {
-      debugPrint('Error loading trade license applications: $e');
+      debugPrint('❌ Error loading trade license applications: $e');
+      _applications = [];
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> submitTradeLicenseApplication(Map<String, dynamic> data) async {
+  Future<String> submitTradeLicenseApplication(
+    Map<String, dynamic> data,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Mock successful submission
-      final application = {
-        'id': 'TL_${DateTime.now().millisecondsSinceEpoch}',
-        'companyName': data['companyName'],
-        'tradeName': data['tradeName'],
-        'licenseType': data['licenseType'],
-        'businessActivity': data['businessActivity'],
-        'status': 'Submitted',
-        'submittedAt': DateTime.now().toIso8601String(),
-        'estimatedCompletion': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-      };
-      
-      _applications.add(application);
-      
+      // Submit application to Firestore
+      final applicationId = await _firestoreService.submitApplication(data);
+
+      // Reload applications to get the updated list
+      await loadApplications();
+
+      debugPrint('✅ Trade license application submitted: $applicationId');
+      return applicationId;
     } catch (e) {
-      debugPrint('Error submitting trade license application: $e');
+      debugPrint('❌ Error submitting trade license application: $e');
       rethrow;
     } finally {
       _isLoading = false;
@@ -77,20 +55,32 @@ class TradeLicenseProvider extends ChangeNotifier {
     }
   }
 
-  void updateApplicationStatus(String applicationId, String status) {
-    final index = _applications.indexWhere((app) => app['id'] == applicationId);
-    
-    if (index != -1) {
-      _applications[index]['status'] = status;
-      notifyListeners();
+  Future<void> updateApplicationStatus(String applicationId, String status) async {
+    try {
+      await _firestoreService.updateApplicationStatus(applicationId, status);
+      
+      // Update local cache
+      final index = _applications.indexWhere((app) => app['id'] == applicationId);
+      if (index != -1) {
+        _applications[index]['status'] = status;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('❌ Error updating application status: $e');
+      rethrow;
     }
   }
 
   Map<String, dynamic>? getApplicationById(String id) {
     try {
       return _applications.firstWhere((app) => app['id'] == id);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
+  }
+
+  /// Stream applications for real-time updates
+  Stream<List<Map<String, dynamic>>> streamApplications() {
+    return _firestoreService.streamUserApplications();
   }
 }

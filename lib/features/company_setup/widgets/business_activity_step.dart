@@ -2,94 +2,86 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wazeet_app/features/company_setup/providers/company_setup_provider.dart';
 import '../../../config/theme/app_colors.dart';
+import '../../../core/services/business_activity_json_service.dart';
+import '../models/business_activity_model.dart';
 
-class BusinessActivityStep extends StatelessWidget {
+class BusinessActivityStep extends StatefulWidget {
   const BusinessActivityStep({super.key});
 
-  static const List<Map<String, dynamic>> businessActivities = [
-    {
-      'id': 'trading',
-      'title': 'Trading & Import/Export',
-      'description': 'Buy and sell goods locally or internationally',
-      'icon': Icons.swap_horiz,
-      'popular': true,
-    },
-    {
-      'id': 'consulting',
-      'title': 'Business Consulting',
-      'description': 'Provide professional advisory services',
-      'icon': Icons.business_center,
-      'popular': true,
-    },
-    {
-      'id': 'technology',
-      'title': 'Technology Services',
-      'description': 'Software development, IT solutions',
-      'icon': Icons.computer,
-      'popular': true,
-    },
-    {
-      'id': 'retail',
-      'title': 'Retail & E-commerce',
-      'description': 'Online and offline retail operations',
-      'icon': Icons.store,
-      'popular': false,
-    },
-    {
-      'id': 'real_estate',
-      'title': 'Real Estate',
-      'description': 'Property development and management',
-      'icon': Icons.home_work,
-      'popular': false,
-    },
-    {
-      'id': 'healthcare',
-      'title': 'Healthcare Services',
-      'description': 'Medical and wellness services',
-      'icon': Icons.local_hospital,
-      'popular': false,
-    },
-    {
-      'id': 'education',
-      'title': 'Education & Training',
-      'description': 'Educational institutions and training centers',
-      'icon': Icons.school,
-      'popular': false,
-    },
-    {
-      'id': 'hospitality',
-      'title': 'Hospitality & Tourism',
-      'description': 'Hotels, restaurants, travel services',
-      'icon': Icons.hotel,
-      'popular': false,
-    },
-    {
-      'id': 'manufacturing',
-      'title': 'Manufacturing',
-      'description': 'Production and industrial activities',
-      'icon': Icons.precision_manufacturing,
-      'popular': false,
-    },
-    {
-      'id': 'finance',
-      'title': 'Financial Services',
-      'description': 'Banking, investment, insurance services',
-      'icon': Icons.account_balance,
-      'popular': false,
-    },
-    {
-      'id': 'other',
-      'title': 'Other',
-      'description': 'Specify your business activity',
-      'icon': Icons.more_horiz,
-      'popular': false,
-    },
-  ];
+  @override
+  State<BusinessActivityStep> createState() => _BusinessActivityStepState();
+}
+
+class _BusinessActivityStepState extends State<BusinessActivityStep> {
+  List<BusinessActivityModel> _allActivities = [];
+  List<BusinessActivityModel> _filteredActivities = [];
+  List<String> _sectors = [];
+  String _searchQuery = '';
+  String? _selectedSector;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActivities();
+  }
+
+  Future<void> _loadActivities() async {
+    setState(() => _isLoading = true);
+    try {
+      final activities = await BusinessActivityJsonService.loadActivities();
+      final sectors = await BusinessActivityJsonService.getSectors();
+      setState(() {
+        _allActivities = activities;
+        _filteredActivities =
+            activities.where((a) => a.isPopular).take(10).toList();
+        _sectors = sectors;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading activities: $e')),
+        );
+      }
+    }
+  }
+
+  void _filterActivities() {
+    setState(() {
+      _filteredActivities = _allActivities.where((activity) {
+        final matchesSearch = _searchQuery.isEmpty ||
+            activity.activityName
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
+            activity.sector.toLowerCase().contains(_searchQuery.toLowerCase());
+        final matchesSector =
+            _selectedSector == null || activity.sector == _selectedSector;
+        return matchesSearch && matchesSector;
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CompanySetupProvider>(
       builder: (context, provider, child) {
+        if (_isLoading) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Loading activities...'),
+                Text('(Loading over 1,900+ business activities)',
+                    style: TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
+          );
+        }
+
         return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -110,69 +102,114 @@ class BusinessActivityStep extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
-              // Popular Activities Section
-              const Text(
-                'Popular Activities',
-                style: TextStyle(
-                  fontSize: 16,
+              // Search Bar
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search activities...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = '';
+                              _filterActivities();
+                            });
+                          },
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                    _filterActivities();
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+
+              // Sector Filter
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('All'),
+                      selected: _selectedSector == null,
+                      onSelected: (selected) {
+                        setState(() {
+                          _selectedSector = null;
+                          _filterActivities();
+                        });
+                      },
+                    ),
+                    ..._sectors.take(8).map((sector) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: FilterChip(
+                          label: Text(sector),
+                          selected: _selectedSector == sector,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedSector = selected ? sector : null;
+                              _filterActivities();
+                            });
+                          },
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Results Count
+              Text(
+                '${_filteredActivities.length} activities found',
+                style: const TextStyle(
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 12),
 
-              ...businessActivities
-                  .where((activity) => activity['popular'] == true)
-                  .map((activity) => _buildActivityCard(
-                        context,
-                        provider,
-                        activity,
-                      )),
-
-              const SizedBox(height: 24),
-
-              // All Activities Section
-              const Text(
-                'All Activities',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 12),
-
+              // Activities List
               Expanded(
-                child: ListView(
-                  children: businessActivities
-                      .where((activity) => activity['popular'] == false)
-                      .map((activity) => _buildActivityCard(
+                child: _filteredActivities.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.search_off,
+                                size: 64, color: Colors.grey[400]),
+                            const SizedBox(height: 16),
+                            const Text('No activities found'),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Try adjusting your search or filters',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _filteredActivities.length,
+                        itemBuilder: (context, index) {
+                          final activity = _filteredActivities[index];
+                          return _buildActivityCard(
                             context,
                             provider,
                             activity,
-                          ))
-                      .toList(),
-                ),
+                          );
+                        },
+                      ),
               ),
-
-              // Custom Activity Input
-              if (provider.selectedActivity == 'other')
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Specify your business activity',
-                      hintText: 'Enter details about your business',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
-                    onChanged: (value) {
-                      provider.setCustomActivity(value);
-                    },
-                  ),
-                ),
             ],
           ),
         );
@@ -183,9 +220,9 @@ class BusinessActivityStep extends StatelessWidget {
   Widget _buildActivityCard(
     BuildContext context,
     CompanySetupProvider provider,
-    Map<String, dynamic> activity,
+    BusinessActivityModel activity,
   ) {
-    final isSelected = provider.selectedActivity == activity['id'];
+    final isSelected = provider.selectedActivity == activity.isicCode;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -197,7 +234,7 @@ class BusinessActivityStep extends StatelessWidget {
         elevation: isSelected ? 2 : 1,
         child: InkWell(
           onTap: () {
-            provider.setSelectedActivity(activity['id']);
+            provider.setSelectedActivity(activity.isicCode);
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(
@@ -220,7 +257,7 @@ class BusinessActivityStep extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    activity['icon'],
+                    _getIconData(activity.iconName),
                     color: isSelected ? Colors.white : AppColors.primary,
                     size: 24,
                   ),
@@ -234,9 +271,9 @@ class BusinessActivityStep extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              activity['title'],
+                              activity.activityName,
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
                                     ? AppColors.primary
@@ -244,7 +281,7 @@ class BusinessActivityStep extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (activity['popular'])
+                          if (activity.isPopular)
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -265,13 +302,24 @@ class BusinessActivityStep extends StatelessWidget {
                             ),
                         ],
                       ),
+                      const SizedBox(height: 6),
+                      Text(
+                        activity.sector,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
-                        activity['description'],
+                        activity.description,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: Colors.grey[600],
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -288,5 +336,32 @@ class BusinessActivityStep extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'oil_barrel':
+        return Icons.oil_barrel;
+      case 'computer':
+        return Icons.computer;
+      case 'swap_horiz':
+        return Icons.swap_horiz;
+      case 'business_center':
+        return Icons.business_center;
+      case 'home_work':
+        return Icons.home_work;
+      case 'local_hospital':
+        return Icons.local_hospital;
+      case 'school':
+        return Icons.school;
+      case 'hotel':
+        return Icons.hotel;
+      case 'precision_manufacturing':
+        return Icons.precision_manufacturing;
+      case 'account_balance':
+        return Icons.account_balance;
+      default:
+        return Icons.business;
+    }
   }
 }
