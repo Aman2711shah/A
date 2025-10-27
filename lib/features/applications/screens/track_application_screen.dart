@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../../../core/services/firebase_firestore_service.dart';
+import '../../../core/services/firestore/application_tracking_service.dart';
 import '../../../config/theme/app_colors.dart';
 
 class TrackApplicationScreen extends StatefulWidget {
@@ -13,64 +11,49 @@ class TrackApplicationScreen extends StatefulWidget {
   State<TrackApplicationScreen> createState() => _TrackApplicationScreenState();
 }
 
-class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
-  final _applicationIdController = TextEditingController();
-  final _firestoreService = FirestoreService();
-
-  bool _isLoading = false;
+class _TrackApplicationScreenState extends State<TrackApplicationScreen>
+    with SingleTickerProviderStateMixin {
+  final _trackingService = ApplicationTrackingService.instance;
+  
+  late TabController _tabController;
+  List<Map<String, dynamic>> _allApplications = [];
+  Map<String, dynamic> _stats = {};
+  bool _isLoading = true;
   String? _errorMessage;
-  Map<String, dynamic>? _applicationData;
-  String? _applicationId;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _loadApplications();
+  }
 
   @override
   void dispose() {
-    _applicationIdController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleTrack() async {
-    final applicationId = _applicationIdController.text.trim();
-    if (applicationId.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter a valid application ID.';
-        _applicationData = null;
-      });
-      return;
-    }
-
+  Future<void> _loadApplications() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
-      _applicationData = null;
     });
 
     try {
-      final snapshot = await _firestoreService.getApplication(applicationId);
-      if (!snapshot.exists) {
-        setState(() {
-          _errorMessage = 'No application found with this ID.';
-        });
-      } else {
-        setState(() {
-          _applicationData =
-              snapshot.data() as Map<String, dynamic>? ?? <String, dynamic>{};
-          _applicationId = snapshot.id;
-        });
-      }
-    } on FirebaseException catch (e) {
+      final applications = await _trackingService.getAllUserApplications();
+      final stats = await _trackingService.getApplicationStats();
+      
       setState(() {
-        _errorMessage = e.message ?? 'Unable to fetch application.';
+        _allApplications = applications;
+        _stats = stats;
+        _isLoading = false;
       });
-    } catch (_) {
+    } catch (e) {
       setState(() {
-        _errorMessage = 'Something went wrong. Please try again.';
+        _errorMessage = 'Error loading applications: $e';
+        _isLoading = false;
       });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
     }
   }
 
@@ -78,261 +61,120 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Track Application'),
+        title: const Text('My Applications'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Enter your application ID to view the latest status.',
-              style: TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _applicationIdController,
-              decoration: const InputDecoration(
-                labelText: 'Application ID',
-                border: OutlineInputBorder(),
-              ),
-              onSubmitted: (_) => _handleTrack(),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleTrack,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Track Application'),
-              ),
-            ),
-            const SizedBox(height: 24),
-            if (_errorMessage != null)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-            if (_applicationData != null) _buildResultCard(),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          tabs: const [
+            Tab(text: 'All'),
+            Tab(text: 'Trade License'),
+            Tab(text: 'Visa'),
+            Tab(text: 'Company'),
           ],
         ),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? _buildErrorView()
+              : _allApplications.isEmpty
+                  ? _buildEmptyView()
+                  : Column(
+                      children: [
+                        _buildStatsCards(),
+                        Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              _buildApplicationsList(_allApplications),
+                              _buildApplicationsList(_filterByType('Trade License')),
+                              _buildApplicationsList(_filterByType('Visa')),
+                              _buildApplicationsList(_filterByType('Company Setup')),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _loadApplications,
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.refresh, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildResultCard() {
-    final status = _applicationData?['status'] as String? ?? 'unknown';
-    final type = _applicationData?['type'] as String? ?? 'N/A';
-    final activity = _applicationData?['activity'] as String? ?? 'N/A';
-    final legalStructure =
-        _applicationData?['legalStructure'] as String? ?? 'N/A';
-    final createdAt = _formatTimestamp(_applicationData?['createdAt']);
-    final updatedAt = _formatTimestamp(_applicationData?['updatedAt']);
-    final completedAt = _formatTimestamp(_applicationData?['completedAt']);
-
-    // Enhanced fields
-    final assignedAdvisor =
-        _applicationData?['assignedAdvisor'] as Map<String, dynamic>?;
-    final statusHistory = _applicationData?['statusHistory'] as List?;
-    final estimatedCompletion =
-        _applicationData?['estimatedCompletion'] as String?;
-    final progressPercentage =
-        _applicationData?['progressPercentage'] as int? ?? 0;
-    final nextSteps = _applicationData?['nextSteps'] as String?;
-    final remarks = _applicationData?['remarks'] as String?;
-
-    return SingleChildScrollView(
-      child: Column(
+  Widget _buildStatsCards() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.grey[100],
+      child: Row(
         children: [
-          // Status Banner
-          _buildStatusBanner(status, progressPercentage),
-
-          const SizedBox(height: 16),
-
-          // Application Details Card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.assignment, color: AppColors.primary),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Application $_applicationId',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildInfoRow('Type', type),
-                  _buildInfoRow('Activity', activity),
-                  _buildInfoRow('Legal Structure', legalStructure),
-                  _buildInfoRow('Created', createdAt),
-                  _buildInfoRow('Last Updated', updatedAt),
-                  if (completedAt != 'N/A')
-                    _buildInfoRow('Completed', completedAt),
-                  if (estimatedCompletion != null)
-                    _buildInfoRow('Est. Completion', estimatedCompletion),
-                ],
-              ),
+          Expanded(
+            child: _buildStatCard(
+              'Total',
+              _stats['total']?.toString() ?? '0',
+              Icons.apps,
+              Colors.blue,
             ),
           ),
-
-          // Assigned Advisor Card
-          if (assignedAdvisor != null) _buildAdvisorCard(assignedAdvisor),
-
-          // Progress Timeline
-          if (statusHistory != null && statusHistory.isNotEmpty)
-            _buildStatusTimeline(statusHistory),
-
-          // Next Steps Card
-          if (nextSteps != null) _buildNextStepsCard(nextSteps),
-
-          // Remarks Card
-          if (remarks != null) _buildRemarksCard(remarks),
-
-          // Documents Card
-          _buildDocumentsCard(),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildStatCard(
+              'Submitted',
+              _stats['submitted']?.toString() ?? '0',
+              Icons.send,
+              Colors.orange,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildStatCard(
+              'Approved',
+              _stats['approved']?.toString() ?? '0',
+              Icons.check_circle,
+              Colors.green,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusBanner(String status, int progressPercentage) {
-    Color statusColor;
-    IconData statusIcon;
-    String statusText;
-
-    switch (status.toLowerCase()) {
-      case 'pending':
-        statusColor = Colors.orange;
-        statusIcon = Icons.hourglass_empty;
-        statusText = 'Pending Review';
-        break;
-      case 'in_review':
-        statusColor = Colors.blue;
-        statusIcon = Icons.visibility;
-        statusText = 'Under Review';
-        break;
-      case 'processing':
-        statusColor = Colors.purple;
-        statusIcon = Icons.sync;
-        statusText = 'Processing';
-        break;
-      case 'approved':
-        statusColor = Colors.green;
-        statusIcon = Icons.check_circle;
-        statusText = 'Approved';
-        break;
-      case 'completed':
-        statusColor = Colors.green;
-        statusIcon = Icons.task_alt;
-        statusText = 'Completed';
-        break;
-      case 'rejected':
-        statusColor = Colors.red;
-        statusIcon = Icons.cancel;
-        statusText = 'Rejected';
-        break;
-      case 'on_hold':
-        statusColor = Colors.amber;
-        statusIcon = Icons.pause_circle;
-        statusText = 'On Hold';
-        break;
-      default:
-        statusColor = Colors.grey;
-        statusIcon = Icons.help_outline;
-        statusText = 'Unknown';
-    }
-
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [statusColor, statusColor.withValues(alpha: 0.7)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(statusIcon, color: Colors.white, size: 48),
-          const SizedBox(height: 12),
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
           Text(
-            statusText,
-            style: const TextStyle(
-              color: Colors.white,
+            value,
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: color,
             ),
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Progress',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    Text(
-                      '$progressPercentage%',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progressPercentage / 100,
-                    backgroundColor: Colors.white.withValues(alpha: 0.3),
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.white),
-                    minHeight: 8,
-                  ),
-                ),
-              ],
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
             ),
           ),
         ],
@@ -340,458 +182,391 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen> {
     );
   }
 
-  Widget _buildAdvisorCard(Map<String, dynamic> advisor) {
-    final name = advisor['name'] as String? ?? 'Unassigned';
-    final email = advisor['email'] as String?;
-    final phone = advisor['phone'] as String?;
-    final photo = advisor['photo'] as String?;
+  List<Map<String, dynamic>> _filterByType(String type) {
+    return _allApplications
+        .where((app) => app['applicationType'] == type)
+        .toList();
+  }
 
-    return Card(
-      margin: const EdgeInsets.only(top: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+  Widget _buildApplicationsList(List<Map<String, dynamic>> applications) {
+    if (applications.isEmpty) {
+      return Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.support_agent, color: AppColors.primary),
-                const SizedBox(width: 8),
-                const Text(
-                  'Your Assigned Advisor',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+            Icon(Icons.inbox, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  backgroundImage: photo != null ? NetworkImage(photo) : null,
-                  child: photo == null
-                      ? Text(
-                          name[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (email != null) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.email,
-                                size: 14, color: AppColors.textSecondary),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                email,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (phone != null) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.phone,
-                                size: 14, color: AppColors.textSecondary),
-                            const SizedBox(width: 4),
-                            Text(
-                              phone,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+            Text(
+              'No applications found',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
             ),
           ],
         ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadApplications,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: applications.length,
+        itemBuilder: (context, index) {
+          return _buildApplicationCard(applications[index]);
+        },
       ),
     );
   }
 
-  Widget _buildStatusTimeline(List statusHistory) {
-    return Card(
-      margin: const EdgeInsets.only(top: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.timeline, color: AppColors.primary),
-                const SizedBox(width: 8),
-                const Text(
-                  'Status History',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...statusHistory.map((entry) {
-              final status = entry['status'] as String? ?? 'Unknown';
-              final timestamp = _formatTimestamp(entry['timestamp']);
-              final note = entry['note'] as String?;
+  Widget _buildApplicationCard(Map<String, dynamic> application) {
+    final type = application['applicationType'] as String? ?? 'Unknown';
+    final icon = application['icon'] as String? ?? '📄';
+    final id = application['id'] as String? ?? 'N/A';
+    final status = application['status'] as String? ?? 'Unknown';
+    final submittedAt = application['submittedAt'] as String? ?? 'N/A';
+    
+    String title = 'Application';
+    String subtitle = '';
+    
+    if (type == 'Trade License') {
+      title = application['companyName'] as String? ?? 'Trade License';
+      subtitle = application['businessActivity'] as String? ?? '';
+    } else if (type == 'Visa') {
+      title = application['employeeName'] as String? ?? 'Visa Application';
+      subtitle = application['visaType'] as String? ?? '';
+    } else if (type == 'Company Setup') {
+      title = application['companyName'] as String? ?? 'Company Setup';
+      subtitle = application['legalStructure'] as String? ?? '';
+    }
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            status.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      child: InkWell(
+        onTap: () => _showApplicationDetails(application),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    icon,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        if (subtitle.isNotEmpty) ...[
+                          const SizedBox(height: 2),
                           Text(
-                            timestamp,
+                            subtitle,
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textSecondary,
                             ),
                           ),
-                          if (note != null) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              note,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNextStepsCard(String nextSteps) {
-    return Card(
-      margin: const EdgeInsets.only(top: 16),
-      color: Colors.blue.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.arrow_forward, color: Colors.blue.shade700),
-                const SizedBox(width: 8),
-                Text(
-                  'Next Steps',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              nextSteps,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.blue.shade900,
+                  _buildStatusBadge(status),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRemarksCard(String remarks) {
-    return Card(
-      margin: const EdgeInsets.only(top: 16),
-      color: Colors.amber.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.info_outline, color: Colors.amber.shade700),
-                const SizedBox(width: 8),
-                Text(
-                  'Remarks',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber.shade700,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              remarks,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.amber.shade900,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDocumentsCard() {
-    return Card(
-      margin: const EdgeInsets.only(top: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.folder_open, color: AppColors.primary),
-                const SizedBox(width: 8),
-                const Text(
-                  'Documents',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildDocumentsList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDocumentsList() {
-    final documents = _applicationData?['documents'] as List?;
-
-    if (documents == null || documents.isEmpty) {
-      return const Text(
-        'No documents uploaded.',
-        style: TextStyle(color: AppColors.textSecondary),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: documents.map<Widget>((doc) {
-        // Handle both string (old format) and map (new format with URLs)
-        String docName;
-        String? docUrl;
-        String? docType;
-
-        if (doc is String) {
-          docName = doc;
-        } else if (doc is Map) {
-          docName = doc['name'] as String? ?? 'Document';
-          docUrl = doc['url'] as String?;
-          docType = doc['type'] as String?;
-        } else {
-          docName = 'Unknown Document';
-        }
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                _getDocumentIcon(docType ?? docName),
-                size: 20,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      docName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Icon(Icons.tag, size: 14, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    id,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
                     ),
-                    if (docType != null)
-                      Text(
-                        docType,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Icon(Icons.calendar_today, size: 14, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    _formatDate(submittedAt),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
-              if (docUrl != null)
-                IconButton(
-                  icon: const Icon(Icons.download, size: 20),
-                  color: AppColors.primary,
-                  onPressed: () => _downloadDocument(docUrl!, docName),
-                  tooltip: 'Download',
-                )
-              else
-                Icon(
-                  Icons.pending,
-                  size: 20,
-                  color: Colors.grey.shade400,
-                ),
             ],
           ),
-        );
-      }).toList(),
+        ),
+      ),
     );
   }
 
-  IconData _getDocumentIcon(String docNameOrType) {
-    final lower = docNameOrType.toLowerCase();
-    if (lower.contains('passport')) return Icons.credit_card;
-    if (lower.contains('photo')) return Icons.photo;
-    if (lower.contains('noc')) return Icons.work;
-    if (lower.contains('certificate') || lower.contains('degree')) {
-      return Icons.school;
+  Widget _buildStatusBadge(String status) {
+    Color color;
+    
+    switch (status.toLowerCase()) {
+      case 'submitted':
+        color = Colors.blue;
+        break;
+      case 'in review':
+      case 'under process':
+        color = Colors.orange;
+        break;
+      case 'approved':
+        color = Colors.green;
+        break;
+      case 'rejected':
+        color = Colors.red;
+        break;
+      case 'completed':
+        color = Colors.teal;
+        break;
+      case 'in progress':
+        color = Colors.purple;
+        break;
+      default:
+        color = Colors.grey;
     }
-    if (lower.contains('bank') || lower.contains('statement')) {
-      return Icons.account_balance;
-    }
-    if (lower.contains('address') || lower.contains('proof')) return Icons.home;
-    if (lower.contains('business') || lower.contains('plan')) {
-      return Icons.business;
-    }
-    return Icons.description;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
   }
 
-  Future<void> _downloadDocument(String url, String fileName) async {
-    try {
-      // For web, open in new tab
-      // ignore: avoid_web_libraries_in_flutter
-      // html.window.open(url, '_blank');
-
-      // For mobile, you would use url_launcher package
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Opening $fileName...'),
-          action: SnackBarAction(
-            label: 'Copy Link',
-            onPressed: () {
-              // Copy URL to clipboard
-              // Clipboard.setData(ClipboardData(text: url));
-            },
+  void _showApplicationDetails(Map<String, dynamic> application) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          application['icon'] as String? ?? '📄',
+                          style: const TextStyle(fontSize: 32),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                application['applicationType'] as String? ?? 'Application',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                application['id'] as String? ?? 'N/A',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildStatusBadge(application['status'] as String? ?? 'Unknown'),
+                      ],
+                    ),
+                    const Divider(height: 32),
+                    ...application.entries.map((entry) {
+                      if (entry.key == 'icon' || 
+                          entry.key == 'applicationType' ||
+                          entry.key == 'userId') {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 140,
+                              child: Text(
+                                _formatFieldName(entry.key),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                entry.value?.toString() ?? 'N/A',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
+
+  String _formatFieldName(String key) {
+    return key
+        .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(0)}')
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1))
+        .join(' ')
+        .trim();
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+      
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else {
+        return '${date.day}/${date.month}/${date.year}';
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to open document: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      return dateString;
     }
   }
 
-  String _formatTimestamp(dynamic value) {
-    if (value is Timestamp) {
-      return value.toDate().toLocal().toString();
-    }
-    return 'N/A';
+  Widget _buildEmptyView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 24),
+            const Text(
+              'No Applications Yet',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Your submitted applications will appear here',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 80, color: Colors.red[400]),
+            const SizedBox(height: 24),
+            const Text(
+              'Error Loading Applications',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _errorMessage ?? 'An unknown error occurred',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _loadApplications,
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              label: const Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

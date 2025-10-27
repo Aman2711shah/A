@@ -52,3 +52,4 @@ app.*.map.json
 
 # Gradle wrapper (downloaded automatically)
 /android/gradle/wrapper/gradle-wrapper.jar
+serviceAccount.json
