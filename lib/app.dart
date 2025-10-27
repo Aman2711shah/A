@@ -7,6 +7,7 @@ import 'features/profile/ui/edit_profile_screen.dart';
 import 'features/trade_license/screens/trade_license_application_wizard.dart';
 import 'features/visa_processing/screens/visa_processing_screen.dart';
 import 'presentation/screens/splash/simple_splash_screen.dart';
+import 'presentation/screens/modern_home_screen.dart';
 
 class WazeetApp extends StatelessWidget {
   const WazeetApp({super.key});
@@ -27,8 +28,10 @@ class WazeetApp extends StatelessWidget {
         '/company-setup': (_) => const CompanySetupScreen(),
         '/trade-license': (_) => const TradeLicenseApplicationWizard(),
         '/visa/application': (_) => const VisaProcessingScreen(),
+        '/modern-home': (_) => const ModernHomeScreen(), // NEW: Modern UI demo
+        '/splash': (_) => const SplashScreen(), // Move splash to route
       },
-      home: const SplashScreen(),
+      home: const ModernHomeScreen(), // DEMO: Show modern UI immediately
     );
   }
 }
