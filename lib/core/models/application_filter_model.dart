@@ -154,17 +154,20 @@ class ApplicationFilter extends Equatable {
     final criteria = <String>[];
     if (startDate != null) criteria.add('startDate: $startDate');
     if (endDate != null) criteria.add('endDate: $endDate');
-    if (statuses != null && statuses!.isNotEmpty)
+    if (statuses != null && statuses!.isNotEmpty) {
       criteria.add('statuses: ${statuses!.join(", ")}');
+    }
     if (applicationTypes != null && applicationTypes!.isNotEmpty) {
       criteria.add('types: ${applicationTypes!.join(", ")}');
     }
-    if (freezones != null && freezones!.isNotEmpty)
+    if (freezones != null && freezones!.isNotEmpty) {
       criteria.add('freezones: ${freezones!.join(", ")}');
+    }
     if (minPrice != null) criteria.add('minPrice: $minPrice');
     if (maxPrice != null) criteria.add('maxPrice: $maxPrice');
-    if (searchQuery != null && searchQuery!.isNotEmpty)
+    if (searchQuery != null && searchQuery!.isNotEmpty) {
       criteria.add('search: $searchQuery');
+    }
     criteria.add('sortBy: $sortBy ${descending ? "DESC" : "ASC"}');
     return 'ApplicationFilter(${criteria.join(", ")})';
   }

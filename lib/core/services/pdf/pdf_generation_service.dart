@@ -323,7 +323,7 @@ class PDFGenerationService {
 
             // Top Freezones
             _buildSectionTitle('Top Freezones'),
-            pw.Table.fromTextArray(
+            pw.TableHelper.fromTextArray(
               headers: ['Rank', 'Freezone', 'Applications'],
               data: topFreezones.asMap().entries.map((entry) {
                 final rank = entry.key + 1;
@@ -467,11 +467,13 @@ class PDFGenerationService {
   /// Share PDF file
   Future<void> sharePDF(File pdfFile, {String? subject}) async {
     try {
-      await Share.shareXFiles(
-        [XFile(pdfFile.path)],
-        subject: subject ?? 'Wazeet Document',
+      final result = await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(pdfFile.path)],
+          subject: subject ?? 'Wazeet Document',
+        ),
       );
-      debugPrint('✅ PDF shared: ${pdfFile.path}');
+      debugPrint('✅ PDF shared: ${pdfFile.path}, status: ${result.status}');
     } catch (e) {
       debugPrint('❌ Error sharing PDF: $e');
       rethrow;

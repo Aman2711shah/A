@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../features/company_setup/models/business_activity_model.dart';
 
@@ -22,7 +23,7 @@ class BusinessActivityJsonService {
 
       return _cachedActivities!;
     } catch (e) {
-      print('Error loading business activities: $e');
+      debugPrint('Error loading business activities: $e');
       return [];
     }
   }
