@@ -7,10 +7,7 @@ void main() {
   late TradeLicenseProvider provider;
 
   setUp(() {
-    provider = TradeLicenseProvider(
-      loadDelay: Duration.zero,
-      submitDelay: Duration.zero,
-    );
+    provider = TradeLicenseProvider();
   });
 
   test('loads mock applications', () async {

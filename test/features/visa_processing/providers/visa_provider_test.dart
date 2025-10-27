@@ -7,10 +7,7 @@ void main() {
   late VisaProvider provider;
 
   setUp(() {
-    provider = VisaProvider(
-      loadDelay: Duration.zero,
-      submitDelay: Duration.zero,
-    );
+    provider = VisaProvider();
   });
 
   test('loads mock visa applications', () async {
