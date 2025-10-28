@@ -42,7 +42,7 @@ class ProfileController extends ChangeNotifier {
   Future<void> load() async {
     _setLoading(true);
     try {
-    final data = await _repository.getCurrent();
+      final data = await _repository.getCurrent();
       _profile = data;
       _error = null;
       _listenToProfileChanges();

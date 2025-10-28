@@ -29,7 +29,7 @@ class ContactInformationStep extends StatelessWidget {
             'Please provide your contact details so our team can reach you to discuss your service request.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 24),
@@ -196,7 +196,7 @@ class ContactInformationStep extends StatelessWidget {
           Icon(
             icon,
             size: 18,
-            color: isSelected ? Colors.white : AppColors.primary,
+            color: isSelected ? AppColors.white : AppColors.primary,
           ),
           const SizedBox(width: 8),
           Text(method),
@@ -208,9 +208,9 @@ class ContactInformationStep extends StatelessWidget {
         }
       },
       selectedColor: AppColors.primary,
-      checkmarkColor: Colors.white,
+      checkmarkColor: AppColors.white,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black87,
+        color: isSelected ? AppColors.white : AppColors.textPrimary,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -228,7 +228,7 @@ class ContactInformationStep extends StatelessWidget {
               '$label:',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[700],
+                color: AppColors.textSecondary,
               ),
             ),
           ),

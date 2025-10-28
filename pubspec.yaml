@@ -118,8 +118,7 @@ flutter:
   uses-material-design: true
   
   assets:
-    # NOTE: The following asset directories are temporarily disabled because they don't exist in the repo.
-    # - assets/images/
-    # - assets/icons/
-    # - assets/animations/
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
     - assets/data/

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../../config/theme/app_colors.dart';
 import '../../../config/routes/route_names.dart';
 import '../../../core/storage/local_storage.dart';
+import '../../../core/theme/app_gradients.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,73 +16,74 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
   bool _dontShowAgain = false;
 
-  final List<OnboardingPage> _pages = [
-    OnboardingPage(
+  final List<_OnboardingPage> _pages = [
+    _OnboardingPage(
       title: 'Welcome to WAZEET',
       description: 'Your complete business setup partner',
       icon: Icons.business_center,
     ),
-    OnboardingPage(
+    _OnboardingPage(
       title: 'Easy Company Formation',
-      description: 'Set up your business in UAE with just a few steps',
+      description: 'Set up your business in the UAE with a few guided steps',
       icon: Icons.apartment,
     ),
-    OnboardingPage(
-      title: 'Track Your Request in Real-Time',
+    _OnboardingPage(
+      title: 'Track Everything in Real-Time',
       description:
-          'Stay updated with real-time notifications, document status tracking, and direct communication with our expert team throughout your journey.',
+          'Stay updated with notifications, document status tracking, and direct access to experts along the way.',
       icon: Icons.trending_up,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            // Skip Button
             if (_currentPage < _pages.length - 1)
               Align(
                 alignment: Alignment.topRight,
                 child: TextButton(
                   onPressed: _skipToEnd,
-                  child: const Text('Skip'),
+                  child: Text(
+                    'Skip',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-            
-            // Pages
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
+                itemCount: _pages.length,
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;
                   });
                 },
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  return _buildPage(_pages[index]);
-                },
+                itemBuilder: (context, index) =>
+                    _buildPage(_pages[index], colorScheme, textTheme),
               ),
             ),
-            
-            // Page Indicator
             SmoothPageIndicator(
               controller: _pageController,
               count: _pages.length,
-              effect: const WormEffect(
-                dotColor: AppColors.lightGrey,
-                activeDotColor: AppColors.primary,
+              effect: WormEffect(
+                dotColor: colorScheme.outlineVariant,
+                activeDotColor: colorScheme.primary,
                 dotHeight: 8,
                 dotWidth: 8,
               ),
             ),
-            
             const SizedBox(height: 24),
-            
-            // Navigation Buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
@@ -91,27 +92,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: _previousPage,
-                        child: const Text('Previous'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                          side: BorderSide(color: colorScheme.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Text(
+                          'Previous',
+                          style: textTheme.titleSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   if (_currentPage > 0) const SizedBox(width: 16),
                   Expanded(
-                    child: ElevatedButton(
+                    child: FilledButton(
                       onPressed: _currentPage < _pages.length - 1
                           ? _nextPage
                           : _getStarted,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                      ),
                       child: Text(
                         _currentPage < _pages.length - 1
                             ? 'Next'
                             : 'Get Started',
+                        style: textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            
-            // Don't show again checkbox (only on last page)
             if (_currentPage == _pages.length - 1)
               Padding(
                 padding: const EdgeInsets.all(24),
@@ -125,51 +149,68 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           _dontShowAgain = value ?? false;
                         });
                       },
+                      activeColor: colorScheme.primary,
                     ),
-                    const Text("Don't show this again"),
+                    Text(
+                      "Don't show this again",
+                      style: textTheme.bodyMedium,
+                    ),
                   ],
                 ),
               ),
-            
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPage(OnboardingPage page) {
+  Widget _buildPage(
+    _OnboardingPage page,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     return Padding(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 200,
-            height: 200,
+            width: 210,
+            height: 210,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              gradient: AppGradients.lightBlueGradient,
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
             child: Icon(
               page.icon,
-              size: 100,
-              color: AppColors.primary,
+              size: 108,
+              color: colorScheme.onPrimary,
             ),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 40),
           Text(
             page.title,
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+            style: textTheme.displayMedium?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.w700,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             page.description,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface.withValues(alpha: 0.75),
+              height: 1.5,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -179,14 +220,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _nextPage() {
     _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 320),
       curve: Curves.easeInOut,
     );
   }
 
   void _previousPage() {
     _pageController.previousPage(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 320),
       curve: Curves.easeInOut,
     );
   }
@@ -196,21 +237,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _getStarted() async {
-    final localStorage = LocalStorage();
-    await localStorage.setOnboardingComplete(true);
-    
+    final storage = LocalStorage();
+    await storage.setOnboardingComplete(true);
     if (mounted) {
       Navigator.pushReplacementNamed(context, RouteNames.login);
     }
   }
 }
 
-class OnboardingPage {
+class _OnboardingPage {
   final String title;
   final String description;
   final IconData icon;
 
-  OnboardingPage({
+  _OnboardingPage({
     required this.title,
     required this.description,
     required this.icon,

@@ -73,7 +73,7 @@ class ProfileCard extends StatelessWidget {
               Text(
                 name,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -81,7 +81,7 @@ class ProfileCard extends StatelessWidget {
               Text(
                 email,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: AppColors.white.withValues(alpha: 0.8),
                     ),
               ),
             ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../config/theme/app_colors.dart';
 import '../../../config/routes/route_names.dart';
+import '../../../core/theme/app_gradients.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
@@ -39,13 +39,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -61,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: AppColors.error,
+                backgroundColor: colorScheme.error,
               ),
             );
           }
@@ -78,61 +82,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo
                   Container(
-                    width: 80,
-                    height: 80,
+                    width: 90,
+                    height: 90,
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(16),
+                      gradient: AppGradients.primaryGradient,
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.primary.withValues(alpha: 0.25),
+                          blurRadius: 30,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'WAZEET',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
                         ),
                       ),
                     ),
                   ),
-                  
-                  const SizedBox(height: 32),
-                  
+                  const SizedBox(height: 24),
                   Text(
                     'Create Account',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: textTheme.displayMedium,
                     textAlign: TextAlign.center,
                   ),
-                  
                   const SizedBox(height: 8),
-                  
                   Text(
                     'Sign up to get started with WAZEET',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
-                  
                   const SizedBox(height: 32),
-                  
-                  // Full Name Field
                   CustomTextField(
                     controller: _fullNameController,
                     label: 'Full Name',
                     hint: 'Enter your full name',
                     prefixIcon: Icons.person_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your full name';
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Required' : null,
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // Email Field
                   CustomTextField(
                     controller: _emailController,
                     label: 'Email',
@@ -141,40 +137,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: Icons.email_outlined,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return 'Required';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email';
+                      const emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+                      if (!RegExp(emailPattern).hasMatch(value)) {
+                        return 'Invalid email';
                       }
                       return null;
                     },
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // Phone Field
                   CustomTextField(
                     controller: _phoneController,
                     label: 'Phone Number',
-                    hint: 'Enter your phone number',
+                    hint: '+971 55 123 4567',
                     keyboardType: TextInputType.phone,
                     prefixIcon: Icons.phone_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Required' : null,
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // Password Field
                   CustomTextField(
                     controller: _passwordController,
                     label: 'Password',
-                    hint: 'Enter your password',
+                    hint: 'Create a password',
                     obscureText: _obscurePassword,
                     prefixIcon: Icons.lock_outlined,
                     suffixIcon: IconButton(
@@ -191,22 +177,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return 'Required';
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return 'Minimum 6 characters';
                       }
                       return null;
                     },
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // Confirm Password Field
                   CustomTextField(
                     controller: _confirmPasswordController,
                     label: 'Confirm Password',
-                    hint: 'Confirm your password',
+                    hint: 'Re-enter your password',
                     obscureText: _obscureConfirmPassword,
                     prefixIcon: Icons.lock_outlined,
                     suffixIcon: IconButton(
@@ -223,7 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
+                        return 'Required';
                       }
                       if (value != _passwordController.text) {
                         return 'Passwords do not match';
@@ -231,10 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  
                   const SizedBox(height: 16),
-                  
-                  // Terms and Conditions
                   Row(
                     children: [
                       Checkbox(
@@ -244,26 +224,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _agreeToTerms = value ?? false;
                           });
                         },
+                        activeColor: colorScheme.primary,
                       ),
                       Expanded(
                         child: RichText(
                           text: TextSpan(
-                            style: Theme.of(context).textTheme.bodySmall,
-                            children: const [
-                              TextSpan(text: 'I agree to the '),
+                            style: textTheme.bodySmall,
+                            children: [
+                              const TextSpan(text: 'I agree to the '),
                               TextSpan(
                                 text: 'Terms and Conditions',
-                                style: TextStyle(
-                                  color: AppColors.primary,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.primary,
                                   decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              TextSpan(text: ' and '),
+                              const TextSpan(text: ' and '),
                               TextSpan(
                                 text: 'Privacy Policy',
-                                style: TextStyle(
-                                  color: AppColors.primary,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.primary,
                                   decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
@@ -272,30 +255,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-                  
                   const SizedBox(height: 24),
-                  
-                  // Register Button
                   CustomButton(
                     text: 'Create Account',
                     onPressed: _agreeToTerms ? _handleRegister : null,
                   ),
-                  
                   const SizedBox(height: 32),
-                  
-                  // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Already have an account? ",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        'Already have an account?',
+                        style: textTheme.bodyMedium,
                       ),
                       TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Login'),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Login',
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -321,4 +302,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 }
-

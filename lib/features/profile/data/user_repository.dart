@@ -92,8 +92,7 @@ class UserRepository implements IUserRepository {
     }
 
     final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.name}';
-    final ref =
-        _storage.ref().child('profileImages/${user.uid}/$fileName');
+    final ref = _storage.ref().child('profileImages/${user.uid}/$fileName');
 
     final bytes = await file.readAsBytes();
     await ref.putData(bytes);

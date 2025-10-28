@@ -14,7 +14,7 @@ class TrackApplicationScreen extends StatefulWidget {
 class _TrackApplicationScreenState extends State<TrackApplicationScreen>
     with SingleTickerProviderStateMixin {
   final _trackingService = ApplicationTrackingService.instance;
-  
+
   late TabController _tabController;
   List<Map<String, dynamic>> _allApplications = [];
   Map<String, dynamic> _stats = {};
@@ -43,7 +43,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
     try {
       final applications = await _trackingService.getAllUserApplications();
       final stats = await _trackingService.getApplicationStats();
-      
+
       setState(() {
         _allApplications = applications;
         _stats = stats;
@@ -63,12 +63,12 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
       appBar: AppBar(
         title: const Text('My Applications'),
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          indicatorColor: AppColors.white,
+          labelColor: AppColors.white,
+          unselectedLabelColor: AppColors.white.withValues(alpha: 0.7),
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Trade License'),
@@ -91,9 +91,11 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
                             controller: _tabController,
                             children: [
                               _buildApplicationsList(_allApplications),
-                              _buildApplicationsList(_filterByType('Trade License')),
+                              _buildApplicationsList(
+                                  _filterByType('Trade License')),
                               _buildApplicationsList(_filterByType('Visa')),
-                              _buildApplicationsList(_filterByType('Company Setup')),
+                              _buildApplicationsList(
+                                  _filterByType('Company Setup')),
                             ],
                           ),
                         ),
@@ -102,7 +104,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
       floatingActionButton: FloatingActionButton(
         onPressed: _loadApplications,
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.refresh, color: Colors.white),
+        child: const Icon(Icons.refresh, color: AppColors.white),
       ),
     );
   }
@@ -110,7 +112,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
   Widget _buildStatsCards() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.grey[100],
+      color: AppColors.background,
       child: Row(
         children: [
           Expanded(
@@ -118,7 +120,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
               'Total',
               _stats['total']?.toString() ?? '0',
               Icons.apps,
-              Colors.blue,
+              AppColors.primary,
             ),
           ),
           const SizedBox(width: 12),
@@ -127,7 +129,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
               'Submitted',
               _stats['submitted']?.toString() ?? '0',
               Icons.send,
-              Colors.orange,
+              AppColors.secondary,
             ),
           ),
           const SizedBox(width: 12),
@@ -136,7 +138,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
               'Approved',
               _stats['approved']?.toString() ?? '0',
               Icons.check_circle,
-              Colors.green,
+              AppColors.success,
             ),
           ),
         ],
@@ -144,15 +146,16 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.textPrimary.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -194,13 +197,13 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox, size: 64, color: Colors.grey[400]),
+            Icon(Icons.inbox, size: 64, color: AppColors.textHint),
             const SizedBox(height: 16),
             Text(
               'No applications found',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.textSecondary,
               ),
             ),
           ],
@@ -226,10 +229,10 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
     final id = application['id'] as String? ?? 'N/A';
     final status = application['status'] as String? ?? 'Unknown';
     final submittedAt = application['submittedAt'] as String? ?? 'N/A';
-    
+
     String title = 'Application';
     String subtitle = '';
-    
+
     if (type == 'Trade License') {
       title = application['companyName'] as String? ?? 'Trade License';
       subtitle = application['businessActivity'] as String? ?? '';
@@ -289,7 +292,8 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Icon(Icons.tag, size: 14, color: AppColors.textSecondary),
+                  const Icon(Icons.tag,
+                      size: 14, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
                     id,
@@ -299,7 +303,8 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Icon(Icons.calendar_today, size: 14, color: AppColors.textSecondary),
+                  const Icon(Icons.calendar_today,
+                      size: 14, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
                     _formatDate(submittedAt),
@@ -319,7 +324,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
 
   Widget _buildStatusBadge(String status) {
     Color color;
-    
+
     switch (status.toLowerCase()) {
       case 'submitted':
         color = Colors.blue;
@@ -404,7 +409,8 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                application['applicationType'] as String? ?? 'Application',
+                                application['applicationType'] as String? ??
+                                    'Application',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -420,12 +426,13 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
                             ],
                           ),
                         ),
-                        _buildStatusBadge(application['status'] as String? ?? 'Unknown'),
+                        _buildStatusBadge(
+                            application['status'] as String? ?? 'Unknown'),
                       ],
                     ),
                     const Divider(height: 32),
                     ...application.entries.map((entry) {
-                      if (entry.key == 'icon' || 
+                      if (entry.key == 'icon' ||
                           entry.key == 'applicationType' ||
                           entry.key == 'userId') {
                         return const SizedBox.shrink();
@@ -472,7 +479,8 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
         .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(0)}')
         .replaceAll('_', ' ')
         .split(' ')
-        .map((word) => word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1))
+        .map((word) =>
+            word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1))
         .join(' ')
         .trim();
   }
@@ -482,7 +490,7 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
       final date = DateTime.parse(dateString);
       final now = DateTime.now();
       final difference = now.difference(date);
-      
+
       if (difference.inDays == 0) {
         return 'Today';
       } else if (difference.inDays == 1) {
@@ -561,7 +569,8 @@ class _TrackApplicationScreenState extends State<TrackApplicationScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
           ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import '../../../config/theme/app_colors.dart';
+import '../../../core/theme/app_gradients.dart';
 import '../../../config/routes/route_names.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
@@ -31,13 +31,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -49,7 +53,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: AppColors.error,
+                backgroundColor: colorScheme.error,
               ),
             );
           }
@@ -64,121 +68,127 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 32),
-                
-                // Logo
+                const SizedBox(height: 24),
                 Container(
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(16),
+                    gradient: AppGradients.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.primary.withValues(alpha: 0.25),
+                        blurRadius: 26,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'WAZEET',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.white,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 32),
-                
                 Text(
                   'Verify Your Phone',
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: textTheme.displayMedium,
                   textAlign: TextAlign.center,
                 ),
-                
                 const SizedBox(height: 8),
-                
                 Text(
                   'We sent a verification code to',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
-                
                 const SizedBox(height: 4),
-                
                 Text(
                   '+971 ${widget.phone}',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.primary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                
-                const SizedBox(height: 48),
-                
-                // OTP Input
+                const SizedBox(height: 40),
                 PinCodeTextField(
                   appContext: context,
                   length: 6,
                   controller: _otpController,
-                  onChanged: (value) {},
-                  onCompleted: (value) {
-                    _verifyOtp(value);
-                  },
+                  cursorColor: colorScheme.primary,
+                  keyboardType: TextInputType.number,
+                  animationType: AnimationType.fade,
+                  onChanged: (_) {},
+                  onCompleted: _verifyOtp,
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                     fieldHeight: 60,
                     fieldWidth: 50,
-                    activeFillColor: AppColors.white,
-                    inactiveFillColor: AppColors.white,
-                    selectedFillColor: AppColors.white,
-                    activeColor: AppColors.primary,
-                    inactiveColor: AppColors.lightGrey,
-                    selectedColor: AppColors.primary,
+                    activeColor: colorScheme.primary,
+                    inactiveColor: colorScheme.outlineVariant,
+                    selectedColor: colorScheme.primary,
+                    inactiveFillColor: colorScheme.surface,
+                    activeFillColor: colorScheme.surface,
+                    selectedFillColor: colorScheme.surface,
+                    borderWidth: 1.4,
                   ),
                   enableActiveFill: true,
-                  keyboardType: TextInputType.number,
                 ),
-                
                 const SizedBox(height: 32),
-                
-                // Verify Button
-                ElevatedButton(
+                FilledButton(
                   onPressed: () {
                     if (_otpController.text.length == 6) {
                       _verifyOtp(_otpController.text);
                     }
                   },
-                  child: const Text('Verify OTP'),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                  ),
+                  child: Text(
+                    'Verify OTP',
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-                
                 const SizedBox(height: 24),
-                
-                // Resend OTP
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Didn't receive the code? ",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      "Didn't receive the code?",
+                      style: textTheme.bodyMedium,
                     ),
                     TextButton(
-                      onPressed: () {
-                        // TODO: Implement resend OTP
-                      },
-                      child: const Text('Resend'),
+                      onPressed: () {},
+                      child: Text(
+                        'Resend',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 16),
-                
-                // Change Phone Number
+                const SizedBox(height: 12),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Change Phone Number'),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Change Phone Number',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -197,4 +207,3 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         );
   }
 }
-

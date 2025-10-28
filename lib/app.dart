@@ -8,6 +8,7 @@ import 'features/trade_license/screens/trade_license_application_wizard.dart';
 import 'features/visa_processing/screens/visa_processing_screen.dart';
 import 'presentation/screens/splash/simple_splash_screen.dart';
 import 'presentation/screens/modern_home_screen.dart';
+import 'presentation/screens/clubhouse_home_screen.dart';
 
 class WazeetApp extends StatelessWidget {
   const WazeetApp({super.key});
@@ -15,7 +16,7 @@ class WazeetApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WAZEET',
+      title: 'Wazeet',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -28,10 +29,12 @@ class WazeetApp extends StatelessWidget {
         '/company-setup': (_) => const CompanySetupScreen(),
         '/trade-license': (_) => const TradeLicenseApplicationWizard(),
         '/visa/application': (_) => const VisaProcessingScreen(),
-        '/modern-home': (_) => const ModernHomeScreen(), // NEW: Modern UI demo
+        '/modern-home': (_) => const ModernHomeScreen(), // Noon-style UI
+        '/clubhouse-home': (_) =>
+            const ClubhouseHomeScreen(), // Clubhouse-style UI
         '/splash': (_) => const SplashScreen(), // Move splash to route
       },
-      home: const ModernHomeScreen(), // DEMO: Show modern UI immediately
+      home: const ClubhouseHomeScreen(), // DEMO: Show Clubhouse-style UI
     );
   }
 }

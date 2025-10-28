@@ -78,34 +78,32 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+            Icon(Icons.search_off, size: 64, color: AppColors.textHint),
             const SizedBox(height: 16),
             Text(
               'No services found',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
             ),
           ],
         ),
       );
     }
 
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           widget.formData['selectedCategory'] ?? '',
-          style: const TextStyle(
-            fontSize: 18,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Choose the specific service you need. Each service includes premium and standard packages.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
         Expanded(
@@ -133,7 +131,9 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : AppColors.white,
         borderRadius: BorderRadius.circular(12),
         elevation: isSelected ? 2 : 1,
         child: InkWell(
@@ -147,7 +147,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isSelected ? AppColors.primary : Colors.grey[300]!,
+                color: isSelected ? AppColors.primary : AppColors.border,
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -162,8 +162,9 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color:
-                              isSelected ? AppColors.primary : Colors.black87,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -184,7 +185,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.blue[50],
+                          color: AppColors.lightBlue,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -195,7 +196,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.blue,
+                                color: AppColors.primary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -210,7 +211,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                               premiumTimeline,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -222,7 +223,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: AppColors.borderSubtle,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -247,7 +248,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                               standardTimeline,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -264,7 +265,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange[50],
+                    color: AppColors.lightOrange,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -272,7 +273,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                       Icon(
                         Icons.description,
                         size: 16,
-                        color: Colors.orange[700],
+                        color: AppColors.secondary,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -280,7 +281,7 @@ class _ServiceSelectionStepState extends State<ServiceSelectionStep> {
                           'Required: $documents',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.orange[700],
+                            color: AppColors.secondary,
                           ),
                         ),
                       ),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../../shared/widgets/custom_text_field.dart';
@@ -34,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _loadUserData() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userData = authProvider.userData;
-    
+
     if (userData != null) {
       _firstNameController.text = userData['firstName'] ?? '';
       _lastNameController.text = userData['lastName'] ?? '';
@@ -55,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _updateProfile() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       try {
         await authProvider.updateProfile({
           'firstName': _firstNameController.text.trim(),
@@ -63,12 +64,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'email': _emailController.text.trim(),
           'phone': _phoneController.text.trim(),
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Profile updated successfully!'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
         }
@@ -87,10 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _logout() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
+
     try {
       await authProvider.logout();
-      
+
       if (mounted) {
         context.go('/auth/login');
       }
@@ -138,31 +139,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: const TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             '${authProvider.userData?['firstName'] ?? ''} ${authProvider.userData?['lastName'] ?? ''}',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             authProvider.userData?['email'] ?? '',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.7),
+                                    ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Profile Form
                   Card(
                     child: Padding(
@@ -174,12 +182,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               'Personal Information',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             const SizedBox(height: 16),
-                            
                             Row(
                               children: [
                                 Expanded(
@@ -207,9 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            
                             const SizedBox(height: 16),
-                            
                             CustomTextField(
                               controller: _emailController,
                               label: 'Email Address',
@@ -221,9 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 FormBuilderValidators.email(),
                               ],
                             ),
-                            
                             const SizedBox(height: 16),
-                            
                             CustomTextField(
                               controller: _phoneController,
                               label: 'Phone Number',
@@ -234,9 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 FormBuilderValidators.required(),
                               ],
                             ),
-                            
                             const SizedBox(height: 24),
-                            
                             CustomButton(
                               text: 'Update Profile',
                               onPressed: _updateProfile,
@@ -247,9 +251,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Settings Section
                   Card(
                     child: Column(
@@ -257,7 +261,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.notifications_outlined),
                           title: const Text('Notifications'),
-                          subtitle: const Text('Manage your notification preferences'),
+                          subtitle: const Text(
+                              'Manage your notification preferences'),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () {
                             // Navigate to notification settings
@@ -267,7 +272,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.security_outlined),
                           title: const Text('Security'),
-                          subtitle: const Text('Change password and security settings'),
+                          subtitle: const Text(
+                              'Change password and security settings'),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () {
                             // Navigate to security settings
@@ -296,19 +302,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Logout Button
                   CustomButton(
                     text: 'Logout',
                     onPressed: _logout,
                     isOutlined: true,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.red,
+                    backgroundColor: AppColors.error,
+                    textColor: AppColors.error,
                     isLoading: authProvider.isLoading,
                   ),
-                  
+
                   const SizedBox(height: 32),
                 ],
               ),
@@ -333,7 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: const Icon(
           Icons.business,
-          color: Colors.white,
+          color: AppColors.white,
           size: 32,
         ),
       ),

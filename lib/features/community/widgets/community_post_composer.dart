@@ -76,14 +76,14 @@ class _CommunityPostComposerState extends State<CommunityPostComposer> {
                           height: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         )
                       : const Icon(Icons.send),
                   label: Text(widget.isSubmitting ? 'Posting...' : 'Post'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.white,
                   ),
                 ),
               ),

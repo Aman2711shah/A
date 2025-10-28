@@ -41,7 +41,7 @@ class GrowthReviewStep extends StatelessWidget {
             'Please review all the information below before submitting your service request.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 24),
@@ -108,7 +108,8 @@ class GrowthReviewStep extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -122,7 +123,7 @@ class GrowthReviewStep extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.calculate,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: 24,
                       ),
                     ),
@@ -176,7 +177,7 @@ class GrowthReviewStep extends StatelessWidget {
                         Icon(
                           Icons.schedule,
                           size: 20,
-                          color: Colors.grey[700],
+                          color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: 8),
                         const Text(
@@ -206,9 +207,9 @@ class GrowthReviewStep extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,7 +218,7 @@ class GrowthReviewStep extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.gavel,
-                      color: Colors.grey[700],
+                      color: AppColors.textSecondary,
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -226,7 +227,7 @@ class GrowthReviewStep extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -279,14 +280,14 @@ class GrowthReviewStep extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
+              color: AppColors.info.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.security,
-                  color: Colors.blue[700],
+                  color: AppColors.info,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -295,7 +296,7 @@ class GrowthReviewStep extends StatelessWidget {
                     'Your data is encrypted and securely stored according to UAE data protection laws.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.blue[700],
+                      color: AppColors.info,
                     ),
                   ),
                 ),
@@ -315,9 +316,9 @@ class GrowthReviewStep extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,7 +356,7 @@ class GrowthReviewStep extends StatelessWidget {
               '$label:',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[600],
+                color: AppColors.textSecondary,
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../config/theme/app_colors.dart';
 
 class PackageSelectionStep extends StatelessWidget {
   final Map<String, dynamic> formData;
@@ -39,7 +40,7 @@ class PackageSelectionStep extends StatelessWidget {
           'Select between Premium (faster processing) or Standard package based on your timeline and budget.',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[600],
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 32),
@@ -53,7 +54,7 @@ class PackageSelectionStep extends StatelessWidget {
           price: premiumPrice,
           timeline: premiumTimeline,
           icon: Icons.rocket_launch,
-          color: Colors.blue,
+          color: AppColors.info,
           features: [
             'Priority processing',
             'Dedicated account manager',
@@ -73,7 +74,7 @@ class PackageSelectionStep extends StatelessWidget {
           price: standardPrice,
           timeline: standardTimeline,
           icon: Icons.verified,
-          color: Colors.green,
+          color: AppColors.success,
           features: [
             'Standard processing time',
             'Email support',
@@ -88,7 +89,7 @@ class PackageSelectionStep extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -96,14 +97,15 @@ class PackageSelectionStep extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.grey[700], size: 20),
+                  Icon(Icons.info_outline,
+                      color: AppColors.textSecondary, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Package Comparison',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -145,7 +147,7 @@ class PackageSelectionStep extends StatelessWidget {
     final isSelected = formData['selectedPackage'] == packageType;
 
     return Material(
-      color: isSelected ? color.withValues(alpha: 0.1) : Colors.white,
+      color: isSelected ? color.withValues(alpha: 0.1) : AppColors.white,
       borderRadius: BorderRadius.circular(16),
       elevation: isSelected ? 4 : 1,
       child: InkWell(
@@ -156,7 +158,7 @@ class PackageSelectionStep extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? color : Colors.grey[300]!,
+              color: isSelected ? color : AppColors.border,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -173,7 +175,7 @@ class PackageSelectionStep extends StatelessWidget {
                     ),
                     child: Icon(
                       icon,
-                      color: isSelected ? Colors.white : color,
+                      color: isSelected ? AppColors.white : color,
                       size: 28,
                     ),
                   ),
@@ -187,14 +189,14 @@ class PackageSelectionStep extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: isSelected ? color : Colors.black87,
+                            color: isSelected ? color : AppColors.textPrimary,
                           ),
                         ),
                         Text(
                           subtitle,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -230,7 +232,7 @@ class PackageSelectionStep extends StatelessWidget {
                           'Completion: $timeline',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -290,9 +292,9 @@ class PackageSelectionStep extends StatelessWidget {
           Expanded(
             child: Text(
               premium,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.blue,
+                color: AppColors.info,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -302,7 +304,7 @@ class PackageSelectionStep extends StatelessWidget {
               standard,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[700],
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),

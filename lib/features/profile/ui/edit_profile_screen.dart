@@ -217,7 +217,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 child: const Icon(
                                   Icons.camera_alt,
                                   size: 18,
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                 ),
                               ),
                             ),

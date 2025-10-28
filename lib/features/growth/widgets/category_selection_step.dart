@@ -60,23 +60,21 @@ class _CategorySelectionStepState extends State<CategorySelectionStep> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'What area do you need help with?',
-          style: TextStyle(
-            fontSize: 18,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Select the category that best matches your business needs. This will help us show you relevant services.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
         Expanded(
@@ -98,7 +96,9 @@ class _CategorySelectionStepState extends State<CategorySelectionStep> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : AppColors.white,
         borderRadius: BorderRadius.circular(12),
         elevation: isSelected ? 2 : 1,
         child: InkWell(
@@ -111,7 +111,7 @@ class _CategorySelectionStepState extends State<CategorySelectionStep> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isSelected ? AppColors.primary : Colors.grey[300]!,
+                color: isSelected ? AppColors.primary : AppColors.border,
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -127,7 +127,7 @@ class _CategorySelectionStepState extends State<CategorySelectionStep> {
                   ),
                   child: Icon(
                     icon,
-                    color: isSelected ? Colors.white : AppColors.primary,
+                    color: isSelected ? AppColors.white : AppColors.primary,
                     size: 28,
                   ),
                 ),
@@ -138,7 +138,9 @@ class _CategorySelectionStepState extends State<CategorySelectionStep> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? AppColors.primary : Colors.black87,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ),

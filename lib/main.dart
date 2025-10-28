@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'features/profile/data/user_repository.dart';
 import 'features/profile/state/profile_controller.dart';
+import 'firebase_options.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
@@ -17,23 +18,14 @@ void main() async {
   try {
     if (!kIsWeb) {
       // For mobile platforms (iOS, Android, macOS)
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       debugPrint('✅ Firebase initialized successfully for mobile');
     } else {
-      // For web platform
-      // Note: After running 'flutterfire configure', import the generated file:
-      // import 'firebase_options.dart';
-      // Then use: await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-      // For now, try to initialize without options (will fail until configured)
-      try {
-        await Firebase.initializeApp();
-        debugPrint('✅ Firebase initialized successfully for web');
-      } catch (e) {
-        debugPrint(
-            '⚠️  Firebase not configured for web yet. Run: flutterfire configure');
-        debugPrint('   Error: $e');
-      }
+      // For web platform - skip Firebase initialization for now
+      debugPrint(
+          '⚠️  Firebase not configured for web yet. Run: flutterfire configure');
     }
   } catch (e) {
     debugPrint('❌ Firebase initialization failed: $e');

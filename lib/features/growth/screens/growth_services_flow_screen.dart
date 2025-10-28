@@ -47,7 +47,7 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
       appBar: AppBar(
         title: const Text('Growth Services'),
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         elevation: 0,
       ),
       body: Consumer<GrowthState>(
@@ -58,7 +58,7 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(24),
@@ -69,8 +69,8 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
                   children: [
                     Text(
                       'Step ${_currentStep + 1} of $_totalSteps',
-                      style: const TextStyle(
-                        color: Colors.white70,
+                      style: TextStyle(
+                        color: AppColors.white70,
                         fontSize: 14,
                       ),
                     ),
@@ -78,7 +78,7 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
                     Text(
                       _stepTitles[_currentStep],
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -87,9 +87,9 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
                     const SizedBox(height: 16),
                     LinearProgressIndicator(
                       value: (_currentStep + 1) / _totalSteps,
-                      backgroundColor: Colors.white24,
+                      backgroundColor: AppColors.white24,
                       valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.white),
+                          const AlwaysStoppedAnimation<Color>(AppColors.white),
                     ),
                   ],
                 ),
@@ -107,10 +107,10 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1),
+                      color: AppColors.textPrimary.withValues(alpha: 0.1),
                       spreadRadius: 1,
                       blurRadius: 4,
                       offset: const Offset(0, -2),
@@ -152,7 +152,7 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.white,
                         ),
                       ),
                     ),
@@ -253,31 +253,31 @@ class _GrowthServicesFlowState extends State<GrowthServicesFlow> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-          title: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 28),
-              SizedBox(width: 12),
-              Text('Request Submitted!'),
-            ],
-          ),
-          content: Text(
-            'Your ${growthState.selectedService} request has been submitted successfully. '
-            'Our team will contact you within ${growthState.getEstimatedTimeline()}.',
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                Navigator.of(context).pop(); // Go back to home
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Done'),
-            ),
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: AppColors.success, size: 28),
+            SizedBox(width: 12),
+            Text('Request Submitted!'),
           ],
         ),
-      );
+        content: Text(
+          'Your ${growthState.selectedService} request has been submitted successfully. '
+          'Our team will contact you within ${growthState.getEstimatedTimeline()}.',
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+              Navigator.of(context).pop(); // Go back to home
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.white,
+            ),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
   }
 }

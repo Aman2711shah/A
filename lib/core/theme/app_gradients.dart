@@ -1,41 +1,66 @@
 import 'package:flutter/material.dart';
 
-/// App gradients inspired by modern e-commerce design
+/// App gradients inspired by Clubhouse and modern social apps
 class AppGradients {
+  // Clubhouse-style primary gradients
+  static const orangeGradient = LinearGradient(
+    colors: [Color(0xFFFF9B73), Color(0xFFFF7A45)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const yellowGradient = LinearGradient(
+    colors: [Color(0xFFFFF5A1), Color(0xFFFFE273)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const lightBlueGradient = LinearGradient(
+    colors: [Color(0xFFBEE7FF), Color(0xFF94D4FF)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const purpleGradient = LinearGradient(
+    colors: [Color(0xFFD4B9FF), Color(0xFFB986FF)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   // Primary brand gradients
   static const primaryGradient = LinearGradient(
-    colors: [Color(0xFF4A90E2), Color(0xFF357ABD)],
+    colors: [Color(0xFF3478F6), Color(0xFFB86EF3)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const accentGradient = LinearGradient(
-    colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
+    colors: [Color(0xFFFF8A3D), Color(0xFFFFB67A)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   // Background gradients
   static const sunsetGradient = LinearGradient(
-    colors: [Color(0xFFFFF9E6), Color(0xFFFFE5B4), Color(0xFFFFD699)],
+    colors: [Color(0xFFFFF1E3), Color(0xFFFFDCC4), Color(0xFFFFC0A1)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const oceanGradient = LinearGradient(
-    colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB), Color(0xFF90CAF9)],
+    colors: [Color(0xFFE7F5FF), Color(0xFFCBE9FF), Color(0xFF9FD4FF)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const mintGradient = LinearGradient(
-    colors: [Color(0xFFE8F5E9), Color(0xFFC8E6C9), Color(0xFFA5D6A7)],
+    colors: [Color(0xFFEFFFF4), Color(0xFFE1FFE9), Color(0xFFC8F8D5)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const lavenderGradient = LinearGradient(
-    colors: [Color(0xFFF3E5F5), Color(0xFFE1BEE7), Color(0xFFCE93D8)],
+    colors: [Color(0xFFF1E8FF), Color(0xFFE0CCFF), Color(0xFFC9A9FF)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

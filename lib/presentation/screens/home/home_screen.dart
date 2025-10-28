@@ -383,7 +383,7 @@ class HomeContentScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.textPrimary.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -440,7 +440,7 @@ class ServicesScreen extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Services'),
             backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.white,
             elevation: 0,
             actions: [
               IconButton(
@@ -515,21 +515,22 @@ class _ServicesHero extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Business Services',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.white,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Complete business setup solutions in UAE',
-            style: TextStyle(fontSize: 14, color: Colors.white70),
+            style: TextStyle(
+                fontSize: 14, color: AppColors.white.withValues(alpha: 0.7)),
           ),
         ],
       ),
@@ -562,14 +563,16 @@ class _ServicesProgress extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: active ? AppColors.primary : Colors.grey.shade300,
+                      color: active ? AppColors.primary : AppColors.border,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
                         style: TextStyle(
-                          color: active ? Colors.white : Colors.black54,
+                          color: active
+                              ? AppColors.white
+                              : AppColors.textSecondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -580,9 +583,8 @@ class _ServicesProgress extends StatelessWidget {
                       child: Container(
                         height: 2,
                         margin: const EdgeInsets.symmetric(horizontal: 6),
-                        color: index < step
-                            ? AppColors.primary
-                            : Colors.grey.shade300,
+                        color:
+                            index < step ? AppColors.primary : AppColors.border,
                       ),
                     ),
                 ],
@@ -629,7 +631,7 @@ class _CategoryList extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: isSelected ? AppColors.primary : Colors.grey.shade200,
+                color: isSelected ? AppColors.primary : AppColors.lightGrey,
               ),
             ),
             child: ListTile(
@@ -853,7 +855,7 @@ class _ServicesNavBar extends StatelessWidget {
               onPressed: canNext ? provider.nextStep : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
               ),
               child: const Text('Next'),
             ),
@@ -875,7 +877,7 @@ class _ServicesError extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
+        color: AppColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -884,14 +886,14 @@ class _ServicesError extends StatelessWidget {
           const Text(
             'Unable to load services',
             style: TextStyle(
-              color: Colors.red,
+              color: AppColors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
-            style: const TextStyle(color: Colors.red),
+            style: const TextStyle(color: AppColors.error),
           ),
           const SizedBox(height: 8),
           TextButton(
@@ -933,7 +935,7 @@ class _ServicesEmptyState extends StatelessWidget {
             onPressed: () => showConsultationRequestDialog(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.white,
             ),
             child: const Text('Talk to an expert'),
           ),
@@ -1075,7 +1077,7 @@ Widget _reviewCta(BuildContext context, ServicesProvider provider) {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.white,
                   ),
                   child: const Text('Start Application'),
                 ),
@@ -1119,7 +1121,7 @@ class _CommunityViewState extends State<_CommunityView> {
       appBar: AppBar(
         title: const Text('Community'),
         backgroundColor: AppColors.secondary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -1253,15 +1255,15 @@ class _CommunityViewState extends State<_CommunityView> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.white,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Connect, learn, and grow with fellow entrepreneurs',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white70,
+              color: AppColors.white.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -1288,13 +1290,13 @@ class _CommunityViewState extends State<_CommunityView> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.white,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white70,
+          style: TextStyle(
+            color: AppColors.white.withValues(alpha: 0.7),
             fontSize: 12,
           ),
         ),
@@ -1323,7 +1325,7 @@ class _CommunityViewState extends State<_CommunityView> {
               onPressed: () => Navigator.pushNamed(context, RouteNames.login),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
               ),
               child: const Text('Sign in to post'),
             ),
@@ -1338,7 +1340,7 @@ class _CommunityViewState extends State<_CommunityView> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
+        color: AppColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1347,14 +1349,14 @@ class _CommunityViewState extends State<_CommunityView> {
           const Text(
             'Unable to load community updates',
             style: TextStyle(
-              color: Colors.red,
+              color: AppColors.error,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
-            style: const TextStyle(color: Colors.red),
+            style: const TextStyle(color: AppColors.error),
           ),
           const SizedBox(height: 8),
           TextButton(
@@ -1408,7 +1410,7 @@ class _CommunityViewState extends State<_CommunityView> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.white,
             ),
             child: const Text('Post now'),
           ),
@@ -1477,7 +1479,7 @@ class __CommunityCommentsSheetState extends State<_CommunityCommentsSheet> {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade400,
+              color: AppColors.border,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1567,7 +1569,7 @@ class __CommunityCommentsSheetState extends State<_CommunityCommentsSheet> {
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
               ),
               child: _isSubmitting
                   ? const SizedBox(
@@ -1575,7 +1577,7 @@ class __CommunityCommentsSheetState extends State<_CommunityCommentsSheet> {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     )
                   : const Text('Post'),
@@ -1598,8 +1600,8 @@ class GrowthScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Business Growth'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.success,
+        foregroundColor: AppColors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -1616,13 +1618,16 @@ class GrowthScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green, Colors.teal],
+                  colors: [
+                    AppColors.success,
+                    AppColors.success.withValues(alpha: 0.7)
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
@@ -1635,15 +1640,15 @@ class GrowthScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Expert strategies and tools to accelerate growth',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: AppColors.white.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -1676,8 +1681,8 @@ class GrowthScreen extends StatelessWidget {
                     icon: const Icon(Icons.assignment_turned_in),
                     label: const Text('Plan My Growth Services'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade700,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.success,
+                      foregroundColor: AppColors.white,
                       minimumSize: const Size.fromHeight(48),
                     ),
                   ),
@@ -1715,8 +1720,9 @@ class GrowthScreen extends StatelessWidget {
                                 trailing: ElevatedButton(
                                   onPressed: onNavigateToServices,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green.shade100,
-                                    foregroundColor: Colors.green.shade900,
+                                    backgroundColor: AppColors.success
+                                        .withValues(alpha: 0.1),
+                                    foregroundColor: AppColors.success,
                                   ),
                                   child: const Text('Explore'),
                                 ),

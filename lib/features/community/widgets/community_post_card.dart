@@ -139,7 +139,7 @@ class _PostActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? Colors.red : AppColors.textSecondary;
+    final color = active ? AppColors.error : AppColors.textSecondary;
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,

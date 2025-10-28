@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wazeet_app/core/theme/app_colors.dart';
 
 import '../providers/dashboard_provider.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -27,6 +28,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: Consumer2<DashboardProvider, AuthProvider>(
         builder: (context, dashboardProvider, authProvider, _) {
@@ -37,14 +41,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 expandedHeight: 120,
                 floating: false,
                 pinned: true,
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: colorScheme.primary,
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     'Welcome back, ${authProvider.userData?['firstName'] ?? 'User'}!',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   background: Container(
@@ -53,8 +56,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                          colorScheme.primary,
+                          AppColors.primaryLight,
                         ],
                       ),
                     ),
@@ -62,15 +65,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_outlined,
-                        color: Colors.white),
+                    icon: Icon(
+                      Icons.notifications_outlined,
+                      color: colorScheme.onPrimary,
+                    ),
                     onPressed: () {
                       // Navigate to notifications
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.account_circle_outlined,
-                        color: Colors.white),
+                    icon: Icon(
+                      Icons.account_circle_outlined,
+                      color: colorScheme.onPrimary,
+                    ),
                     onPressed: () {
                       context.go('/profile');
                     },
@@ -166,6 +173,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildQuickStats(DashboardProvider provider) {
+    final theme = Theme.of(context);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -174,9 +183,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Text(
               'Your Business Overview',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -186,7 +195,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     'Active Applications',
                     '${provider.activeApplications}',
                     Icons.pending_actions,
-                    Colors.blue,
+                    AppColors.info,
                   ),
                 ),
                 Expanded(
@@ -194,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     'Completed',
                     '${provider.completedApplications}',
                     Icons.check_circle,
-                    Colors.green,
+                    AppColors.success,
                   ),
                 ),
                 Expanded(
@@ -202,7 +211,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     'Documents',
                     '${provider.pendingDocuments}',
                     Icons.description,
-                    Colors.orange,
+                    AppColors.warning,
                   ),
                 ),
               ],
@@ -215,6 +224,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildStatItem(
       String label, String value, IconData icon, Color color) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface.withValues(alpha: 0.7);
+
     return Column(
       children: [
         Container(
@@ -228,16 +240,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 8),
         Text(
           value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: onSurface,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -245,14 +257,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildQuickActions() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -262,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title: 'New Company',
                 subtitle: 'Start your business',
                 icon: Icons.business,
-                color: Colors.blue,
+                color: AppColors.primary,
                 onTap: () => context.go('/company-formation'),
               ),
             ),
@@ -272,7 +285,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title: 'Trade License',
                 subtitle: 'Apply for license',
                 icon: Icons.description,
-                color: Colors.green,
+                color: AppColors.success,
                 onTap: () => context.go('/trade-license'),
               ),
             ),
@@ -286,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title: 'Visa Processing',
                 subtitle: 'Employee visas',
                 icon: Icons.work,
-                color: Colors.orange,
+                color: AppColors.warning,
                 onTap: () => context.go('/visa-processing'),
               ),
             ),
@@ -296,7 +309,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title: 'Documents',
                 subtitle: 'Upload files',
                 icon: Icons.upload_file,
-                color: Colors.purple,
+                color: AppColors.tertiary,
                 onTap: () {
                   // Navigate to documents
                 },
@@ -309,6 +322,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildRecentApplications(DashboardProvider provider) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -317,9 +332,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Text(
               'Recent Applications',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -337,8 +352,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color:
-                      _getStatusColor(application['status']).withValues(alpha: 0.1),
+                  color: _getStatusColor(application['status'])
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -364,14 +379,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildServices() {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Our Services',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 16),
         GridView.count(
@@ -386,28 +403,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
               title: 'Company Formation',
               subtitle: 'LLC, Free Zone, Mainland',
               icon: Icons.business,
-              color: Colors.blue,
+              color: AppColors.primary,
               onTap: () => context.go('/company-formation'),
             ),
             ServiceCard(
               title: 'Trade License',
               subtitle: 'Business License Application',
               icon: Icons.description,
-              color: Colors.green,
+              color: AppColors.success,
               onTap: () => context.go('/trade-license'),
             ),
             ServiceCard(
               title: 'Visa Services',
               subtitle: 'Employee & Investor Visas',
               icon: Icons.work,
-              color: Colors.orange,
+              color: AppColors.warning,
               onTap: () => context.go('/visa-processing'),
             ),
             ServiceCard(
               title: 'Banking',
               subtitle: 'Business Bank Account',
               icon: Icons.account_balance,
-              color: Colors.purple,
+              color: AppColors.tertiary,
               onTap: () {
                 // Navigate to banking services
               },
@@ -419,14 +436,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildNotifications(DashboardProvider provider) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Recent Notifications',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 16),
         ...provider.notifications.map(
@@ -447,15 +465,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return Colors.orange;
+        return AppColors.warning;
       case 'approved':
-        return Colors.green;
+        return AppColors.success;
       case 'rejected':
-        return Colors.red;
+        return AppColors.error;
       case 'in review':
-        return Colors.blue;
+        return AppColors.info;
       default:
-        return Colors.grey;
+        return AppColors.textSecondary;
     }
   }
 
