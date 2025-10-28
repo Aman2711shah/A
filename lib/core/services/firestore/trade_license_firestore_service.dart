@@ -2,7 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
-class TradeLicenseFirestoreService {
+abstract class TradeLicenseDataSource {
+  Future<String> submitApplication(Map<String, dynamic> applicationData);
+  Future<List<Map<String, dynamic>>> getUserApplications();
+  Future<Map<String, dynamic>?> getApplicationById(String applicationId);
+  Future<void> updateApplicationStatus(String applicationId, String newStatus);
+  Future<void> updateApplication(
+      String applicationId, Map<String, dynamic> updates);
+  Future<void> deleteApplication(String applicationId);
+  Stream<List<Map<String, dynamic>>> streamUserApplications();
+}
+
+class TradeLicenseFirestoreService implements TradeLicenseDataSource {
   static TradeLicenseFirestoreService? _instance;
   static TradeLicenseFirestoreService get instance {
     _instance ??= TradeLicenseFirestoreService._();
@@ -17,6 +28,7 @@ class TradeLicenseFirestoreService {
   static const String _collectionName = 'trade_license_applications';
 
   /// Submit a new trade license application
+  @override
   Future<String> submitApplication(Map<String, dynamic> applicationData) async {
     try {
       final userId = _auth.currentUser?.uid;
@@ -47,6 +59,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Get all applications for the current user
+  @override
   Future<List<Map<String, dynamic>>> getUserApplications() async {
     try {
       final userId = _auth.currentUser?.uid;
@@ -89,6 +102,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Get a specific application by ID
+  @override
   Future<Map<String, dynamic>?> getApplicationById(String applicationId) async {
     try {
       final docSnapshot =
@@ -117,6 +131,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Update application status
+  @override
   Future<void> updateApplicationStatus(
       String applicationId, String newStatus) async {
     try {
@@ -133,6 +148,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Update application data
+  @override
   Future<void> updateApplication(
       String applicationId, Map<String, dynamic> updates) async {
     try {
@@ -153,6 +169,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Delete an application
+  @override
   Future<void> deleteApplication(String applicationId) async {
     try {
       await _firestore.collection(_collectionName).doc(applicationId).delete();
@@ -194,6 +211,7 @@ class TradeLicenseFirestoreService {
   }
 
   /// Stream of user's applications for real-time updates
+  @override
   Stream<List<Map<String, dynamic>>> streamUserApplications() {
     final userId = _auth.currentUser?.uid;
     if (userId == null) {

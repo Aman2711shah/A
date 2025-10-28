@@ -2,7 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
-class VisaFirestoreService {
+abstract class VisaDataSource {
+  Future<String> submitApplication(Map<String, dynamic> applicationData);
+  Future<List<Map<String, dynamic>>> getUserApplications();
+  Future<Map<String, dynamic>?> getApplicationById(String applicationId);
+  Future<void> updateApplicationStatus(String applicationId, String newStatus);
+  Future<void> updateApplication(
+      String applicationId, Map<String, dynamic> updates);
+  Future<void> deleteApplication(String applicationId);
+  Stream<List<Map<String, dynamic>>> streamUserApplications();
+  Future<List<Map<String, dynamic>>> getApplicationsByStatus(String status);
+  Future<List<Map<String, dynamic>>> getApplicationsByVisaType(String visaType);
+}
+
+class VisaFirestoreService implements VisaDataSource {
   static VisaFirestoreService? _instance;
   static VisaFirestoreService get instance {
     _instance ??= VisaFirestoreService._();
@@ -17,6 +30,7 @@ class VisaFirestoreService {
   static const String _collectionName = 'visa_applications';
 
   /// Submit a new visa application
+  @override
   Future<String> submitApplication(Map<String, dynamic> applicationData) async {
     try {
       final userId = _auth.currentUser?.uid;
@@ -48,6 +62,7 @@ class VisaFirestoreService {
   }
 
   /// Get all visa applications for the current user
+  @override
   Future<List<Map<String, dynamic>>> getUserApplications() async {
     try {
       final userId = _auth.currentUser?.uid;
@@ -88,6 +103,7 @@ class VisaFirestoreService {
   }
 
   /// Get a specific visa application by ID
+  @override
   Future<Map<String, dynamic>?> getApplicationById(String applicationId) async {
     try {
       final docSnapshot =
@@ -115,6 +131,7 @@ class VisaFirestoreService {
   }
 
   /// Update visa application status
+  @override
   Future<void> updateApplicationStatus(
       String applicationId, String newStatus) async {
     try {
@@ -132,6 +149,7 @@ class VisaFirestoreService {
   }
 
   /// Update visa application data
+  @override
   Future<void> updateApplication(
       String applicationId, Map<String, dynamic> updates) async {
     try {
@@ -152,6 +170,7 @@ class VisaFirestoreService {
   }
 
   /// Delete a visa application
+  @override
   Future<void> deleteApplication(String applicationId) async {
     try {
       await _firestore.collection(_collectionName).doc(applicationId).delete();
@@ -163,6 +182,7 @@ class VisaFirestoreService {
   }
 
   /// Get visa applications by status
+  @override
   Future<List<Map<String, dynamic>>> getApplicationsByStatus(
       String status) async {
     try {
@@ -193,6 +213,7 @@ class VisaFirestoreService {
   }
 
   /// Stream of user's visa applications for real-time updates
+  @override
   Stream<List<Map<String, dynamic>>> streamUserApplications() {
     final userId = _auth.currentUser?.uid;
     if (userId == null) {
@@ -221,6 +242,7 @@ class VisaFirestoreService {
   }
 
   /// Get visa applications by visa type
+  @override
   Future<List<Map<String, dynamic>>> getApplicationsByVisaType(
       String visaType) async {
     try {

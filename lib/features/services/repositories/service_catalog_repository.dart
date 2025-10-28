@@ -6,13 +6,22 @@ import '../models/service_catalog.dart';
 class ServiceCatalogRepository {
   ServiceCatalogRepository({
     FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
-  final FirebaseFirestore _firestore;
+    List<ServiceCategory>? seedCatalog,
+  })  : _firestore = firestore,
+        _seedCatalog = seedCatalog;
+
+  final FirebaseFirestore? _firestore;
+  final List<ServiceCategory>? _seedCatalog;
 
   Future<List<ServiceCategory>> fetchCatalog() async {
+    if (_seedCatalog != null) {
+      return _seedCatalog!;
+    }
+
     try {
+      final firestore = _firestore ?? FirebaseFirestore.instance;
       final categoriesSnapshot =
-          await _firestore.collection('service_categories').get();
+          await firestore.collection('service_categories').get();
       if (categoriesSnapshot.docs.isEmpty) {
         return fallbackServiceCatalog;
       }
@@ -41,7 +50,8 @@ class ServiceCatalogRepository {
     required SubService subService,
     required Map<String, dynamic> customerData,
   }) async {
-    await _firestore.collection('service_quotes').add({
+    final firestore = _firestore ?? FirebaseFirestore.instance;
+    await firestore.collection('service_quotes').add({
       ...customerData,
       'categoryId': category.id,
       'categoryName': category.name,

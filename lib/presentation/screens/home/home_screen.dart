@@ -1091,10 +1091,19 @@ Widget _reviewCta(BuildContext context, ServicesProvider provider) {
 }
 
 class CommunityScreen extends StatelessWidget {
-  const CommunityScreen({super.key});
+  const CommunityScreen({super.key, this.overrideProvider});
+
+  final CommunityProvider? overrideProvider;
 
   @override
   Widget build(BuildContext context) {
+    if (overrideProvider != null) {
+      return ChangeNotifierProvider<CommunityProvider>.value(
+        value: overrideProvider!,
+        child: const _CommunityView(),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => CommunityProvider(),
       child: const _CommunityView(),

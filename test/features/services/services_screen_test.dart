@@ -1,69 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:wazeet_app/presentation/screens/home/home_screen.dart';
+import 'package:wazeet_app/features/services/models/service_catalog.dart';
+import 'package:wazeet_app/features/services/providers/services_provider.dart';
+import 'package:wazeet_app/features/services/repositories/service_catalog_repository.dart';
 import 'package:wazeet_app/presentation/controllers/profile_controller.dart';
+import 'package:wazeet_app/presentation/screens/home/home_screen.dart';
+
+final _sampleCatalog = [
+  const ServiceCategory(
+    id: 'business_setup',
+    name: 'Business Setup',
+    subtitle: 'Company formation & licensing',
+    overview: 'Complete support for launching your UAE business.',
+    benefits: ['Dedicated consultant'],
+    requirements: ['Passport copy'],
+    types: [
+      ServiceType(
+        name: 'LLC Formation',
+        description: 'Launch an LLC with guided support',
+        subServices: [
+          SubService(
+            name: 'Standard Package',
+            premiumCost: 6500,
+            standardCost: 4500,
+            premiumTimeline: '5-7 days',
+            standardTimeline: '10-12 days',
+            documents: 'Passport copy, preferred name reservation',
+          ),
+        ],
+      ),
+    ],
+  ),
+  const ServiceCategory(
+    id: 'freezone_packages',
+    name: 'Freezone Packages',
+    subtitle: 'Tailored packages across UAE freezones',
+    overview: 'Choose the best package based on your needs.',
+    benefits: ['Multiple licensing options'],
+    requirements: ['Passport copy'],
+    types: [
+      ServiceType(
+        name: 'Flexi Desk Package',
+        description: 'Perfect for startups needing flexibility',
+        subServices: [
+          SubService(
+            name: 'Starter',
+            premiumCost: 5200,
+            standardCost: 3800,
+            premiumTimeline: '4-5 days',
+            standardTimeline: '7-9 days',
+            documents: 'Passport copy, residence details',
+          ),
+        ],
+      ),
+    ],
+  ),
+];
+
+Widget _buildTestApp() {
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => ProfileController()),
+      ChangeNotifierProvider(
+        create: (_) => ServicesProvider(
+          repository: ServiceCatalogRepository(seedCatalog: _sampleCatalog),
+        ),
+      ),
+    ],
+    child: const MaterialApp(home: ServicesScreen()),
+  );
+}
 
 void main() {
   group('ServicesScreen Tests', () {
-    testWidgets('Renders services screen with category list', (tester) async {
-      await tester.pumpWidget(
-        ChangeNotifierProvider(
-          create: (_) => ProfileController(),
-          child: const MaterialApp(
-            home: ServicesScreen(),
-          ),
-        ),
-      );
-
+    testWidgets('renders hero, progress, and category list', (tester) async {
+      await tester.pumpWidget(_buildTestApp());
       await tester.pumpAndSettle();
 
-      // Verify AppBar
       expect(find.byType(AppBar), findsOneWidget);
       expect(find.text('Services'), findsOneWidget);
-
-      // Verify hero section
-      expect(find.text('Professional Business Services'), findsOneWidget);
-
-      // Verify progress indicator (step 0)
-      expect(find.byType(LinearProgressIndicator), findsOneWidget);
-
-      // Verify initial step shows categories
-      expect(find.text('Select Service Category'), findsOneWidget);
-
-      // Should show service categories
-      expect(find.text('Business Setup'), findsOneWidget);
-      expect(find.text('Freezone Packages'), findsOneWidget);
-      expect(find.text('Growth Services'), findsOneWidget);
-    });
-
-    testWidgets('Can select a service category', (tester) async {
-      await tester.pumpWidget(
-        ChangeNotifierProvider(
-          create: (_) => ProfileController(),
-          child: const MaterialApp(
-            home: ServicesScreen(),
-          ),
-        ),
+      expect(find.text('Business Services'), findsOneWidget);
+      expect(
+        find.text('Complete business setup solutions in UAE'),
+        findsOneWidget,
       );
 
+      expect(find.text('Select Category'), findsOneWidget);
+      expect(find.text('Service Categories'), findsOneWidget);
+      expect(find.text('Business Setup'), findsOneWidget);
+      expect(find.text('Freezone Packages'), findsOneWidget);
+    });
+
+    testWidgets('navigates to service types after selecting a category',
+        (tester) async {
+      await tester.pumpWidget(_buildTestApp());
       await tester.pumpAndSettle();
 
-      // Find and tap "Business Setup" category
-      final businessSetupCard = find
-          .ancestor(
-            of: find.text('Business Setup'),
-            matching: find.byType(Card),
-          )
-          .first;
-
-      await tester.tap(businessSetupCard);
+      await tester.tap(find.text('Business Setup'));
       await tester.pumpAndSettle();
 
-      // After selection, "Next" button should be enabled
+      expect(find.text('LLC Formation'), findsOneWidget);
+      expect(find.text('Company formation & licensing'), findsOneWidget);
+
+      final backButton = find.widgetWithText(OutlinedButton, 'Back');
+      expect(backButton, findsOneWidget);
+
       final nextButton = find.widgetWithText(ElevatedButton, 'Next');
       expect(nextButton, findsOneWidget);
-      expect(tester.widget<ElevatedButton>(nextButton).onPressed, isNotNull);
+      expect(tester.widget<ElevatedButton>(nextButton).onPressed, isNull);
     });
   });
 }

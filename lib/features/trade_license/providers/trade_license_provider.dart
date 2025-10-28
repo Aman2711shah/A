@@ -4,9 +4,11 @@ import '../../../core/services/firestore/trade_license_firestore_service.dart';
 class TradeLicenseProvider extends ChangeNotifier {
   TradeLicenseProvider({
     List<Map<String, dynamic>>? initialApplications,
-  }) : _applications = initialApplications ?? [];
+    TradeLicenseDataSource? dataSource,
+  })  : _applications = initialApplications ?? [],
+        _dataSource = dataSource ?? TradeLicenseFirestoreService.instance;
 
-  final _firestoreService = TradeLicenseFirestoreService.instance;
+  final TradeLicenseDataSource _dataSource;
 
   bool _isLoading = false;
   List<Map<String, dynamic>> _applications;
@@ -20,7 +22,7 @@ class TradeLicenseProvider extends ChangeNotifier {
 
     try {
       // Load applications from Firestore
-      _applications = await _firestoreService.getUserApplications();
+      _applications = await _dataSource.getUserApplications();
       debugPrint('✅ Loaded ${_applications.length} applications from Firestore');
     } catch (e) {
       debugPrint('❌ Error loading trade license applications: $e');
@@ -39,7 +41,7 @@ class TradeLicenseProvider extends ChangeNotifier {
 
     try {
       // Submit application to Firestore
-      final applicationId = await _firestoreService.submitApplication(data);
+      final applicationId = await _dataSource.submitApplication(data);
 
       // Reload applications to get the updated list
       await loadApplications();
@@ -57,7 +59,7 @@ class TradeLicenseProvider extends ChangeNotifier {
 
   Future<void> updateApplicationStatus(String applicationId, String status) async {
     try {
-      await _firestoreService.updateApplicationStatus(applicationId, status);
+      await _dataSource.updateApplicationStatus(applicationId, status);
       
       // Update local cache
       final index = _applications.indexWhere((app) => app['id'] == applicationId);
@@ -81,6 +83,6 @@ class TradeLicenseProvider extends ChangeNotifier {
 
   /// Stream applications for real-time updates
   Stream<List<Map<String, dynamic>>> streamApplications() {
-    return _firestoreService.streamUserApplications();
+    return _dataSource.streamUserApplications();
   }
 }
