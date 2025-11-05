@@ -11,6 +11,7 @@ import 'features/visa_processing/screens/visa_processing_screen.dart';
 import 'presentation/screens/splash/simple_splash_screen.dart';
 import 'presentation/screens/modern_home_screen.dart';
 import 'presentation/screens/clubhouse_home_screen.dart';
+import 'presentation/screens/settings/appearance_settings_screen.dart';
 
 class WazeetApp extends StatelessWidget {
   const WazeetApp({super.key});
@@ -37,6 +38,7 @@ class WazeetApp extends StatelessWidget {
             '/clubhouse-home': (_) =>
                 const ClubhouseHomeScreen(), // Clubhouse-style UI
             '/splash': (_) => const SplashScreen(), // Move splash to route
+            AppearanceSettingsScreen.routeName: (_) => const AppearanceSettingsScreen(),
           },
           home: const ClubhouseHomeScreen(), // DEMO: Show Clubhouse-style UI
         );
