@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wazeet_app/core/providers/theme_provider.dart';
 import 'package:wazeet_app/core/theme/app_colors.dart';
 import 'package:wazeet_app/core/theme/app_gradients.dart';
 
@@ -130,13 +132,40 @@ class _ClubhouseHomeScreenState extends State<ClubhouseHomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          '1:59',
-                          style: TextStyle(
-                            color: AppColors.black.withValues(alpha: 0.7),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              '1:59',
+                              style: TextStyle(
+                                color: AppColors.black.withValues(alpha: 0.7),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Theme toggle button
+                            Consumer<ThemeProvider>(
+                              builder: (context, themeProvider, child) {
+                                return GestureDetector(
+                                  onTap: () => themeProvider.toggleTheme(),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      themeProvider.isDarkMode
+                                          ? Icons.light_mode
+                                          : Icons.dark_mode,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
