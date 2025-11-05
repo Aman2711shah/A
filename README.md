@@ -131,7 +131,10 @@ WAZEET is a comprehensive native mobile application built with Flutter that serv
 
 ### 🎨 Modern UI/UX
 - **Material Design 3**: Latest Material Design principles
-- **Dark/Light Theme**: Automatic theme switching based on system preferences
+- **Dark/Light Theme**: Choose between Light, Dark, or System modes with persistent preferences
+  - Quick toggle button on home screen for instant switching
+  - Comprehensive appearance settings screen
+  - Theme preference saved across app restarts
 - **Responsive Design**: Optimized for various screen sizes
 - **Smooth Animations**: Engaging user experience with smooth transitions
 
