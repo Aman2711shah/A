@@ -6,6 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
+import 'core/providers/theme_provider.dart';
+import 'core/storage/local_storage.dart';
 import 'features/profile/data/user_repository.dart';
 import 'features/profile/state/profile_controller.dart';
 import 'firebase_options.dart';
@@ -55,6 +57,10 @@ void main() async {
     );
   }
 
+  // Initialize LocalStorage and ThemeProvider
+  final localStorage = LocalStorage();
+  await localStorage.init();
+
   runApp(
     MultiProvider(
       providers: [
@@ -64,6 +70,9 @@ void main() async {
         ChangeNotifierProvider<ProfileController>(
           create: (context) =>
               ProfileController(context.read<IUserRepository>()),
+        ),
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(localStorage),
         ),
       ],
       child: const WazeetApp(),

@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'core/providers/theme_provider.dart';
+import 'core/storage/local_storage.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_gradients.dart';
 import 'core/theme/app_theme.dart';
 
-void main() {
-  runApp(const ModernThemeTestApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final localStorage = LocalStorage();
+  await localStorage.init();
+  
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(localStorage),
+      child: const ModernThemeTestApp(),
+    ),
+  );
 }
 
 class ModernThemeTestApp extends StatelessWidget {
@@ -12,13 +24,17 @@ class ModernThemeTestApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WAZEET Modern UI',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const ModernUIScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'WAZEET Modern UI',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          home: const ModernUIScreen(),
+        );
+      },
     );
   }
 }
@@ -31,43 +47,34 @@ class ModernUIScreen extends StatefulWidget {
 }
 
 class _ModernUIScreenState extends State<ModernUIScreen> {
-  bool isDarkMode = false;
-
   @override
   Widget build(BuildContext context) {
-    final effectiveTheme =
-        isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return Theme(
-      data: effectiveTheme,
-      child: Builder(
-        builder: (context) {
-          final theme = Theme.of(context);
-          final colorScheme = theme.colorScheme;
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'WAZEET Theme Test',
-                style: theme.textTheme.titleLarge,
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                    color: colorScheme.primary,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isDarkMode = !isDarkMode;
-                    });
-                  },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'WAZEET Theme Test',
+          style: theme.textTheme.titleLarge,
+        ),
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                  color: colorScheme.primary,
                 ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+                onPressed: () => themeProvider.toggleTheme(),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Welcome Card
@@ -234,11 +241,8 @@ class _ModernUIScreenState extends State<ModernUIScreen> {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

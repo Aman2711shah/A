@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wazeet_app/core/providers/theme_provider.dart';
 import 'package:wazeet_app/core/theme/app_colors.dart';
 import 'package:wazeet_app/core/theme/app_gradients.dart';
+import 'package:wazeet_app/presentation/screens/settings/appearance_settings_screen.dart';
 
 class ClubhouseHomeScreen extends StatefulWidget {
   const ClubhouseHomeScreen({super.key});
@@ -130,29 +133,80 @@ class _ClubhouseHomeScreenState extends State<ClubhouseHomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          '1:59',
-                          style: TextStyle(
-                            color: AppColors.black.withValues(alpha: 0.7),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Text(
-                            'Done',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                        Row(
+                          children: [
+                            Text(
+                              '1:59',
+                              style: TextStyle(
+                                color: AppColors.black.withValues(alpha: 0.7),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 16),
+                            // Theme toggle button
+                            Consumer<ThemeProvider>(
+                              builder: (context, themeProvider, child) {
+                                return GestureDetector(
+                                  onTap: () => themeProvider.toggleTheme(),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      themeProvider.isDarkMode
+                                          ? Icons.light_mode
+                                          : Icons.dark_mode,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                  AppearanceSettingsScreen.routeName,
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.settings,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Text(
+                                'Done',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
