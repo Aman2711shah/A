@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wazeet_app/core/providers/theme_provider.dart';
 import 'package:wazeet_app/core/theme/app_colors.dart';
 import 'package:wazeet_app/core/theme/app_gradients.dart';
+import 'package:wazeet_app/presentation/screens/settings/appearance_settings_screen.dart';
 
 class ClubhouseHomeScreen extends StatefulWidget {
   const ClubhouseHomeScreen({super.key});
@@ -171,7 +172,9 @@ class _ClubhouseHomeScreenState extends State<ClubhouseHomeScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pushNamed('/settings/appearance');
+                                Navigator.of(context).pushNamed(
+                                  AppearanceSettingsScreen.routeName,
+                                );
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(8),

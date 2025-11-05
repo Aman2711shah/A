@@ -23,6 +23,10 @@ class ThemeProvider extends ChangeNotifier {
     return _themeMode == ThemeMode.system;
   }
 
+  bool get isExplicitTheme {
+    return _themeMode != ThemeMode.system;
+  }
+
   Future<void> _loadThemeMode() async {
     final savedMode = _localStorage.getThemeMode();
     switch (savedMode) {
@@ -63,7 +67,9 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   Future<void> toggleTheme() async {
-    if (_themeMode == ThemeMode.light) {
+    // When in system mode, default to switching to dark mode
+    // Otherwise, toggle between light and dark
+    if (_themeMode == ThemeMode.light || _themeMode == ThemeMode.system) {
       await setThemeMode(ThemeMode.dark);
     } else {
       await setThemeMode(ThemeMode.light);
